@@ -1,6 +1,6 @@
 <p>Authorizations!
 
-<code>{{ (user | async)?.email }}</code>
+<code>{{ user?.displayName }}</code>
 @if (!logged_in) {<button (click)="login()"></button>}
 @if (logged_in) {<button (click)="logout()"></button>}
 
