@@ -15,6 +15,7 @@ export class FirestoreService {
   get_visible(uid: string): Work[] {
     var works: Work[] = [];
     const works_data = collectionData(this.works_col) as unknown as Observable<Work>;
+    // query here using given uid -- possibly change from a parameter to a direct read from the auth service
     works_data.pipe(timeout({first: 5000})).forEach( (data: Work) => {
       works.push( data )
     });
