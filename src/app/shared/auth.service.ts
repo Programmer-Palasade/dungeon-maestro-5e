@@ -12,7 +12,6 @@ export class AuthService implements OnDestroy {
   private google_provider = new GoogleAuthProvider();
 
   public readonly user: Observable<User | null> = EMPTY;
-  public subscription: Subscription|undefined;
   private readonly userDisposable: Subscription|undefined;
 
   public logged_in = false;
@@ -30,7 +29,6 @@ export class AuthService implements OnDestroy {
 
    ngOnDestroy(): void {
      this.userDisposable?.unsubscribe();
-     this.subscription?.unsubscribe();
    }
 
    async login_google() {

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, OnDestroy, inject } from '@angular/core';
 import { User } from '@angular/fire/auth';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../shared/auth.service';
@@ -11,21 +11,26 @@ import { AuthService } from '../shared/auth.service';
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
-export class LoginComponent {
+export class LoginComponent implements OnDestroy {
 
   private auth = inject(AuthService)
+  private user_sub: Subscription;
 
   public user: User|undefined;
   logged_in = false;
 
   constructor () {
-    this.auth.subscription = this.auth.user.subscribe((u: User | null) => {
+    this.user_sub = this.auth.user.subscribe((u: User | null) => {
       this.user = undefined;
       this.logged_in = this.auth.logged_in;
       if (u != null) {
         this.user = u;
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.user_sub.unsubscribe();
   }
 
   async login() {
