@@ -1,7 +1,6 @@
 import { Injectable, OnDestroy, inject } from '@angular/core';
 import { EMPTY, Observable, Subscription } from 'rxjs';
-import { Auth, authState, User, user, signInWithPopup, GoogleAuthProvider, signOut } from '@angular/fire/auth';
-import { traceUntilFirst } from '@angular/fire/performance';
+import { Auth, User, user, signInWithPopup, GoogleAuthProvider, signOut } from '@angular/fire/auth';
 
 @Injectable({
   providedIn: 'root'

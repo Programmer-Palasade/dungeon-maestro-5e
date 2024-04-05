@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy, inject } from '@angular/core';
-import { Firestore, collection, collectionData, query, or, where } from '@angular/fire/firestore';
+import { Firestore, collection, collectionData, doc, docData, query, or, where } from '@angular/fire/firestore';
 import { Observable, Subscription, timeout } from 'rxjs';
 import { AuthService } from './auth.service';
 
@@ -33,33 +33,45 @@ export class FirestoreService implements OnDestroy {
     this.selected_campaign = c_id;
   }
 
+  load(doc_path: string): Observable<any> | null {
+    if (!this.auth.logged_in) { return null; }
+    return docData(doc(this.firestore, doc_path));
+  }
+
   async get_campaigns(): Promise<Campaign[]> {
     var campaigns: Campaign[] = [];
-    if (!this.auth.logged_in) {return campaigns;}
+    if (!this.auth.logged_in) { return campaigns; }
     const campaign_data$ = collectionData(this.campaigns_col) as unknown as Observable<Campaign>;  // query here once tested
-    await campaign_data$.pipe(timeout({first: 6000})).forEach( (data: Campaign) => { campaigns.push( data ) });
+    await campaign_data$.pipe(timeout({each: 5000})).forEach( (data: Campaign) => { campaigns.push( data ) });
     return campaigns;
   }
 
   async get_visible_works(): Promise<Work[]> {
     var works: Work[] = [];
-    if (!this.auth.logged_in) {return works;}
+    if (!this.auth.logged_in) { return works; }
     const works_data$ = collectionData( query(this.works_col, where('campaigns', 'array-contains', this.selected_campaign)) ) as unknown as Observable<Work>;
-    await works_data$.pipe(timeout({first: 6000})).forEach( (data: Work) => { works.push( data ) });
+    await works_data$.pipe(timeout({each: 5000})).forEach( (data: Work) => { works.push( data ) });
     return works;
   }
 
 }
 
 
-interface Campaign {
+export interface Campaign {
   name: string,
   owner: string,
   users: string[]
 }
 
 
-interface Work {
+export interface User {
+  uid: string,
+  name: string,
+  email: string
+}
+
+
+export interface Work {
   beholders: string[],
   campaigns: string[],
   filterables: string[],
