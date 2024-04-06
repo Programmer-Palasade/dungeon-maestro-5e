@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
-import { ActivatedRouteSnapshot } from '@angular/router';
-import { FirestoreService } from '../shared/firestore.service';
-import { Location } from '@angular/common';
+import { Component, OnDestroy, inject } from '@angular/core';
+import { FirestoreService, Campaign, Work, User } from '../shared/firestore.service';
+import { Observable, Subscription } from 'rxjs';
+import { AuthService } from '../shared/auth.service';
 
 @Component({
   selector: 'app-landing-page',
@@ -11,15 +11,13 @@ import { Location } from '@angular/common';
   templateUrl: './landing-page.component.html',
   styleUrl: './landing-page.component.css'
 })
-export class LandingPageComponent {
+export class LandingPageComponent implements OnDestroy {
 
-  private firestore = inject(FirestoreService);
-  private route = inject(ActivatedRouteSnapshot);
-  private location = inject(Location);
-
-  public user = {uid:"", name:"", email:""};
+  public firestore = inject(FirestoreService);
 
   constructor () { }
 
+  ngOnDestroy(): void {
+  }
 }
 

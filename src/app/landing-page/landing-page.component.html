@@ -1,6 +1,7 @@
-<p>landing-page works!
-
-    <code>{{user.uid}}</code>
-<a>Here are Campaigns attached to this user:</a>
-
-</p>
+<a>
+    <p style="text-align:center">{{firestore.user.name}}</p>
+    <header style="text-align:center"><a>Here are Campaigns attached to this user:</a></header>
+    @for (c of firestore.campaigns; track c.doc_id) {
+        <li style="text-align:center">{{c.name}}</li>
+    }
+</a>

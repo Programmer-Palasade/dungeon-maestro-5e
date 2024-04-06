@@ -1,7 +1,8 @@
 import { Injectable, OnDestroy, inject } from '@angular/core';
-import { Firestore, collection, collectionData, doc, docData, query, or, where } from '@angular/fire/firestore';
+import { Firestore, collection, collectionData, doc, docData, query, or, where, onSnapshot, getDoc } from '@angular/fire/firestore';
 import { Observable, Subscription, timeout } from 'rxjs';
 import { AuthService } from './auth.service';
+import { Unsubscribe } from '@angular/fire/auth';
 
 @Injectable({
   providedIn: 'root'
@@ -16,62 +17,69 @@ export class FirestoreService implements OnDestroy {
   private readonly campaigns_col = collection(this.firestore, 'campaigns');
   private readonly works_col = collection(this.firestore, 'works');
 
-  private uid: string = "";
+  public user: User = {uid:"", name:"", email:""};
+  public campaigns: Campaign[] = [];
   private selected_campaign: string = "";
+  public works: Work[] = [];
+
+  private listeners: Unsubscribe[] = [];
 
   constructor() {
     this.user_sub = this.auth.user.subscribe(u => {
-      this.uid = u?.uid ?? "";
-    })
+      if (u == null) {this.user = {uid:"", name:"", email:""}}
+      else {
+        getDoc( doc(this.firestore, 'users/'.concat(u.uid) ) ).then( snapshot => {
+          this.user = {uid: u.uid, name: snapshot.get('name'), email: snapshot.get('email')}
+        })
+      }
+    });
+    // ADJUST THE QUERY HERE TO LOAD BASED ON CORRECT USER
+    this.listeners.push( onSnapshot( query( this.campaigns_col, or( where('owner', '==', 'test_admin'), where('users', 'array-contains', this.user.uid) ) ), snapshot => {
+      snapshot.forEach( c => {
+        var look_ahead = this.campaigns.filter( element => { return element.doc_id == c.id } );
+        if (look_ahead.length > 0) {
+          look_ahead[0].name = c.get('name');
+          look_ahead[0].owner = c.get('owner');
+          look_ahead[0].users = c.get('users');
+        }
+        else {
+          var new_c = c.data() as Campaign;
+          new_c.doc_id = c.id;
+          this.campaigns.push(new_c);
+        }
+      } )
+    } ) )
   }
 
   ngOnDestroy(): void {
     this.user_sub.unsubscribe();
+    this.listeners.forEach( unsub => { unsub(); });
   }
 
   select_campaign(c_id: string) {
     this.selected_campaign = c_id;
   }
 
-  load(doc_path: string): Observable<any> | null {
-    if (!this.auth.logged_in) { return null; }
-    return docData(doc(this.firestore, doc_path));
-  }
-
-  async get_campaigns(): Promise<Campaign[]> {
-    var campaigns: Campaign[] = [];
-    if (!this.auth.logged_in) { return campaigns; }
-    const campaign_data$ = collectionData(this.campaigns_col) as unknown as Observable<Campaign>;  // query here once tested
-    await campaign_data$.pipe(timeout({each: 5000})).forEach( (data: Campaign) => { campaigns.push( data ) });
-    return campaigns;
-  }
-
-  async get_visible_works(): Promise<Work[]> {
-    var works: Work[] = [];
-    if (!this.auth.logged_in) { return works; }
-    const works_data$ = collectionData( query(this.works_col, where('campaigns', 'array-contains', this.selected_campaign)) ) as unknown as Observable<Work>;
-    await works_data$.pipe(timeout({each: 5000})).forEach( (data: Work) => { works.push( data ) });
-    return works;
-  }
-
 }
 
 
 export interface Campaign {
+  doc_id?: string,
   name: string,
   owner: string,
-  users: string[]
+  users: string[],
 }
 
 
 export interface User {
-  uid: string,
+  uid?: string,
   name: string,
   email: string
 }
 
 
 export interface Work {
+  doc_id?: string,
   beholders: string[],
   campaigns: string[],
   filterables: string[],
