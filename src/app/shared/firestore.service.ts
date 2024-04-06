@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy, inject } from '@angular/core';
-import { Firestore, collection, collectionData, doc, docData, query, or, where, onSnapshot, getDoc } from '@angular/fire/firestore';
+import { Firestore, collection, collectionData, doc, docData, query, and, or, where, onSnapshot, getDoc, addDoc, CollectionReference, QueryFieldFilterConstraint, QueryCompositeFilterConstraint } from '@angular/fire/firestore';
 import { Observable, Subscription, timeout } from 'rxjs';
 import { AuthService } from './auth.service';
 import { Unsubscribe } from '@angular/fire/auth';
@@ -15,56 +15,82 @@ export class FirestoreService implements OnDestroy {
 
   private readonly users_col = collection(this.firestore, 'users');
   private readonly campaigns_col = collection(this.firestore, 'campaigns');
+  private q_campaign: Unsubscribe|undefined;
   private readonly works_col = collection(this.firestore, 'works');
+  private q_works: Unsubscribe|undefined;
 
   public user: User = {uid:"", name:"", email:""};
-  public campaigns: Campaign[] = [];
+  public campaigns: Map<string, Campaign> = new Map();
   private selected_campaign: string = "";
-  public works: Work[] = [];
-
-  private listeners: Unsubscribe[] = [];
+  public works: Map<string, Work> = new Map();
 
   constructor() {
     this.user_sub = this.auth.user.subscribe(u => {
-      if (u == null) {this.user = {uid:"", name:"", email:""}}
+      if (u == null) {
+        this.user = {uid:"", name:"", email:""};
+        if (this.q_campaign) {this.q_campaign();}
+        this.campaigns = new Map();
+        if (this.q_works) {this.q_works();}
+        this.works = new Map();
+      }
       else {
         getDoc( doc(this.firestore, 'users/'.concat(u.uid) ) ).then( snapshot => {
-          this.user = {uid: u.uid, name: snapshot.get('name'), email: snapshot.get('email')}
-        })
+          if (snapshot.exists()) {
+            this.user = {uid: u.uid, name: snapshot.get('name'), email: snapshot.get('email')};
+          }
+          else {
+            this.user = {uid:u.uid, name: u.displayName??"Unknown Adventurer", email: u.email??"" };
+            addDoc(this.users_col, this.user);
+          }
+          this.campaign_listener();
+        });
       }
     });
-    // ADJUST THE QUERY HERE TO LOAD BASED ON CORRECT USER
-    this.listeners.push( onSnapshot( query( this.campaigns_col, or( where('owner', '==', 'test_admin'), where('users', 'array-contains', this.user.uid) ) ), snapshot => {
-      snapshot.forEach( c => {
-        var look_ahead = this.campaigns.filter( element => { return element.doc_id == c.id } );
-        if (look_ahead.length > 0) {
-          look_ahead[0].name = c.get('name');
-          look_ahead[0].owner = c.get('owner');
-          look_ahead[0].users = c.get('users');
-        }
-        else {
-          var new_c = c.data() as Campaign;
-          new_c.doc_id = c.id;
-          this.campaigns.push(new_c);
-        }
-      } )
-    } ) )
   }
 
   ngOnDestroy(): void {
     this.user_sub.unsubscribe();
-    this.listeners.forEach( unsub => { unsub(); });
+    if (this.q_campaign) {this.q_campaign();}
+    this.campaigns = new Map();
+    if (this.q_works) {this.q_works();}
+    this.works = new Map();
+  }
+
+  campaign_listener() {
+    if (this.q_campaign) {this.q_campaign();}
+    this.campaigns = new Map();
+    this.q_campaign = onSnapshot( query( this.campaigns_col, or( where('owner', '==', this.user.uid), where('users', 'array-contains', this.user.uid) ) ), snapshot => {
+      snapshot.forEach( c => {
+          this.campaigns.set(c.id, c.data() as Campaign);
+      })
+    });
+  }
+
+  works_listener() {
+    if (this.q_works) {this.q_works();}
+    this.works = new Map();
+    var q = query( this.works_col, where( 'campaigns', 'array-contains', this.selected_campaign ) );
+    if (this.campaigns.get(this.selected_campaign)?.owner != this.user.uid) {
+      q = query( this.works_col, and( where('campaigns', 'array-contains', this.selected_campaign), or( where('supervisible', '==', true), where('beholders', 'array-contains', this.user.uid) ) ) );
+    }
+    this.q_works = onSnapshot( q, snapshot => {
+      snapshot.forEach( w => {
+        this.works.set(w.id, w.data() as Work)
+      })
+    } )
   }
 
   select_campaign(c_id: string) {
-    this.selected_campaign = c_id;
+    if (this.campaigns.has(c_id)) {
+      this.selected_campaign = c_id;
+      this.works_listener();
+    }
   }
 
 }
 
 
 export interface Campaign {
-  doc_id?: string,
   name: string,
   owner: string,
   users: string[],
@@ -72,14 +98,13 @@ export interface Campaign {
 
 
 export interface User {
-  uid?: string,
+  uid: string,
   name: string,
   email: string
 }
 
 
 export interface Work {
-  doc_id?: string,
   beholders: string[],
   campaigns: string[],
   filterables: string[],

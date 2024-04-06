@@ -1,7 +1,7 @@
 <a>
     <p style="text-align:center">{{firestore.user.name}}</p>
     <header style="text-align:center"><a>Here are Campaigns attached to this user:</a></header>
-    @for (c of firestore.campaigns; track c.doc_id) {
-        <li style="text-align:center">{{c.name}}</li>
+    @for ( c of firestore.campaigns | keyvalue; track c.key) {
+        <li style="text-align:center">{{c.value.name}}</li>
     }
 </a>
