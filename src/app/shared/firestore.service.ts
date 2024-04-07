@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy, inject } from '@angular/core';
-import { Firestore, collection, collectionData, doc, docData, query, and, or, where, onSnapshot, getDoc, addDoc, CollectionReference, QueryFieldFilterConstraint, QueryCompositeFilterConstraint, setDoc } from '@angular/fire/firestore';
-import { Observable, Subscription, timeout } from 'rxjs';
+import { Firestore, collection, doc, query, and, or, where, onSnapshot, getDoc, setDoc } from '@angular/fire/firestore';
+import { Subscription } from 'rxjs';
 import { AuthService } from './auth.service';
 import { Unsubscribe } from '@angular/fire/auth';
 
