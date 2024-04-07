@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy, inject } from '@angular/core';
-import { Firestore, collection, collectionData, doc, docData, query, and, or, where, onSnapshot, getDoc, addDoc, CollectionReference, QueryFieldFilterConstraint, QueryCompositeFilterConstraint } from '@angular/fire/firestore';
+import { Firestore, collection, collectionData, doc, docData, query, and, or, where, onSnapshot, getDoc, addDoc, CollectionReference, QueryFieldFilterConstraint, QueryCompositeFilterConstraint, setDoc } from '@angular/fire/firestore';
 import { Observable, Subscription, timeout } from 'rxjs';
 import { AuthService } from './auth.service';
 import { Unsubscribe } from '@angular/fire/auth';
@@ -34,13 +34,14 @@ export class FirestoreService implements OnDestroy {
         this.works = new Map();
       }
       else {
-        getDoc( doc(this.firestore, 'users/'.concat(u.uid) ) ).then( snapshot => {
+        const user_doc = doc(this.firestore, 'users/'.concat(u.uid));
+        getDoc( user_doc ).then( snapshot => {
           if (snapshot.exists()) {
             this.user = {uid: u.uid, name: snapshot.get('name'), email: snapshot.get('email')};
           }
           else {
             this.user = {uid:u.uid, name: u.displayName??"Unknown Adventurer", email: u.email??"" };
-            addDoc(this.users_col, this.user);
+            setDoc( user_doc, {name: this.user.name, email: this.user.email});
           }
           this.campaign_listener();
         });
