@@ -51,15 +51,22 @@ export class FirestoreService implements OnDestroy {
 
   ngOnDestroy(): void {
     this.user_sub.unsubscribe();
+    this.unlisten_campaign();
+  }
+
+  unlisten_campaign() {
     if (this.q_campaign) {this.q_campaign();}
     this.campaigns = new Map();
+    this.unlisten_works();
+  }
+
+  unlisten_works() {
     if (this.q_works) {this.q_works();}
     this.works = new Map();
   }
 
   campaign_listener() {
-    if (this.q_campaign) {this.q_campaign();}
-    this.campaigns = new Map();
+    this.unlisten_campaign();
     this.q_campaign = onSnapshot( query( this.campaigns_col, or( where('owner', '==', this.user.uid), where('users', 'array-contains', this.user.uid) ) ), snapshot => {
       snapshot.forEach( c => {
           this.campaigns.set(c.id, c.data() as Campaign);
@@ -68,8 +75,7 @@ export class FirestoreService implements OnDestroy {
   }
 
   works_listener() {
-    if (this.q_works) {this.q_works();}
-    this.works = new Map();
+    this.unlisten_works();
     var q = query( this.works_col, where( 'campaigns', 'array-contains', this.selected_campaign ) );
     if (this.campaigns.get(this.selected_campaign)?.owner != this.user.uid) {
       q = query( this.works_col, and( where('campaigns', 'array-contains', this.selected_campaign), or( where('supervisible', '==', true), where('beholders', 'array-contains', this.user.uid) ) ) );
