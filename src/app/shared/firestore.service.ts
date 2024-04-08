@@ -87,7 +87,7 @@ export class FirestoreService implements OnDestroy {
 
   private get_work_query() {
     var works = query(this.works_col);
-    if (this.campaigns.get(this.selected_campaign)?.owner != this.user.uid) {works = query(works, where('beholders', 'array-contains', this.user.uid));}
+    if (this.campaigns.get(this.selected_campaign)?.owner != this.user.uid) {works = query(works, or(where('beholders', 'array-contains', this.user.uid), where('supervisible', '==', true)));}
     this.campaigns.forEach( c => {
       var ind = 0
       if (c.works.length <= 30) {
