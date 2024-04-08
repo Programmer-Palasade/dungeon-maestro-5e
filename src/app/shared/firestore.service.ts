@@ -13,7 +13,6 @@ export class FirestoreService implements OnDestroy {
   private auth = inject(AuthService);
   private user_sub: Subscription;
 
-  private readonly users_col = collection(this.firestore, 'users');
   private readonly campaigns_col = collection(this.firestore, 'campaigns');
   private q_campaign: Unsubscribe|undefined;
   private readonly works_col = collection(this.firestore, 'works');
@@ -44,6 +43,7 @@ export class FirestoreService implements OnDestroy {
             setDoc( user_doc, {name: this.user.name, email: this.user.email});
           }
           this.campaign_listener();
+          this.works_listener();
         });
       }
     });
@@ -82,9 +82,9 @@ export class FirestoreService implements OnDestroy {
     }
     this.q_works = onSnapshot( q, snapshot => {
       snapshot.forEach( w => {
-        this.works.set(w.id, w.data() as Work)
+        this.works.set(w.id, w.data() as Work);
       })
-    } )
+    } );
   }
 
   select_campaign(c_id: string) {
