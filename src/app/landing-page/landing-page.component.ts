@@ -13,7 +13,8 @@ export class LandingPageComponent {
 
   public firestore = inject(FirestoreService);
 
-  constructor () { }
+  constructor () {
+  }
 
 }
 
