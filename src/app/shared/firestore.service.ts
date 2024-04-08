@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy, inject } from '@angular/core';
-import { Firestore, collection, doc, query, or, where, onSnapshot, getDoc, setDoc } from '@angular/fire/firestore';
+import { Firestore, collection, doc, query, or, where, onSnapshot, getDoc, setDoc, addDoc } from '@angular/fire/firestore';
 import { Subscription } from 'rxjs';
 import { AuthService } from './auth.service';
 import { Unsubscribe } from '@angular/fire/auth';
@@ -80,12 +80,14 @@ export class FirestoreService implements OnDestroy {
     this.q_works = onSnapshot( q, snapshot => {
       snapshot.forEach( w => {
         this.all_works.set(w.id, w.data() as Work);
-      })
+      });
+      this.select_campaign(this.selected_campaign);
     } );
   }
 
   private get_work_query() {
     var works = query(this.works_col);
+    if (this.campaigns.get(this.selected_campaign)?.owner != this.user.uid) {works = query(works, where('beholders', 'array-contains', this.user.uid));}
     this.campaigns.forEach( c => {
       var ind = 0
       if (c.works.length <= 30) {
@@ -114,6 +116,18 @@ export class FirestoreService implements OnDestroy {
       this.selected_campaign = "";
       this.works = new Map();
     }
+  }
+
+  upload_campaign(c: Campaign) {
+    addDoc(this.campaigns_col, c).then( new_ref => {
+      this.campaigns.set(new_ref.id, c);
+    } )
+  }
+
+  upload_work(w: Work) {
+    addDoc( this.works_col, w).then( new_ref => {
+      this.all_works.set(new_ref.id, w);
+    })
   }
 
 }
