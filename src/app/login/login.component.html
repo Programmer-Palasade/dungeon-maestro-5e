@@ -1,7 +1,4 @@
-<p>Authorizations!
-
-<code>{{ (user | async)?.email }}</code>
-@if (show_login_button) {<button (click)="login()"></button>}
-@if (show_logout_button) {<button (click)="logout()"></button>}
-
-</p>
+<header style="text-align:center">
+@if (!this.auth.logged_in) {<button (click)="login()">Login</button>}
+@if (this.auth.logged_in) {<button (click)="logout()">Logout</button>}
+</header>
