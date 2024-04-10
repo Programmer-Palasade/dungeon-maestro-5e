@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy, inject } from '@angular/core';
-import { Firestore, collection, doc, query, or, where, onSnapshot, getDoc, setDoc, addDoc } from '@angular/fire/firestore';
+import { Firestore, collection, doc, query, or, where, onSnapshot, getDoc, setDoc, addDoc, Query, DocumentData } from '@angular/fire/firestore';
 import { Subscription } from 'rxjs';
 import { AuthService } from './auth.service';
 import { Unsubscribe } from '@angular/fire/auth';
@@ -15,20 +15,17 @@ export class FirestoreService implements OnDestroy {
 
   private readonly campaigns_col = collection(this.firestore, 'campaigns');
   private q_campaign: Unsubscribe|undefined;
-  private readonly works_col = collection(this.firestore, 'works');
-  private q_works: Unsubscribe|undefined;
+  private q_works: Map<string, Unsubscribe> = new Map();
 
   public user: User = {uid:"", name:"", email:""};
   public campaigns: Map<string, Campaign> = new Map();
-  public selected_campaign: string = "";
-  private all_works: Map<string, Work> = new Map();
-  public works: Map<string, Work> = new Map();
+  public works: Map<string, Map<string, Work>> = new Map();
 
   constructor() {
     this.user_sub = this.auth.user.subscribe(u => {
       if (u == null) {
         this.user = {uid:"", name:"", email:""};
-        this.unlisten_campaign();
+        this.unlisten_campaigns();
       }
       else {
         const user_doc = doc(this.firestore, 'users/'.concat(u.uid));
@@ -40,8 +37,7 @@ export class FirestoreService implements OnDestroy {
             this.user = {uid:u.uid, name: u.displayName??"Unknown Adventurer", email: u.email??"" };
             setDoc( user_doc, {name: this.user.name, email: this.user.email});
           }
-          this.campaign_listener();
-          this.works_listener();
+          this.listener();
         });
       }
     });
@@ -49,73 +45,71 @@ export class FirestoreService implements OnDestroy {
 
   ngOnDestroy(): void {
     this.user_sub.unsubscribe();
-    this.unlisten_campaign();
+    this.unlisten_campaigns();
   }
 
-  unlisten_campaign() {
+  private unlisten_campaigns() {
     if (this.q_campaign) {this.q_campaign();}
     this.campaigns = new Map();
-    this.select_campaign("");
     this.unlisten_works();
   }
 
-  unlisten_works() {
-    if (this.q_works) {this.q_works();}
-    this.all_works = new Map();
-    this.select_campaign(this.selected_campaign);
+  private unlisten_works(c_id?: string) {
+    if (c_id) {
+      var unsub = this.q_works.get(c_id);
+      if (unsub) {unsub();}
+      this.q_works.delete(c_id);
+      this.works.delete(c_id);
+    }
+    else {
+      this.q_works.forEach( (value, key) => {value();});
+      this.q_works = new Map();
+      this.works = new Map();
+    }
   }
 
-  campaign_listener() {
-    this.unlisten_campaign();
-    this.q_campaign = onSnapshot( query( this.campaigns_col, or( where('owner', '==', this.user.uid), where('users', 'array-contains', this.user.uid) ) ), snapshot => {
-      snapshot.forEach( c => {
-          this.campaigns.set(c.id, c.data() as Campaign);
+  private listener() {
+    this.unlisten_campaigns();
+    const q_c = query( this.campaigns_col, or( where('owner', '==', this.user.uid), where('users', 'array-contains', this.user.uid) ) )
+    this.q_campaign = onSnapshot( q_c, snapshot => {
+      snapshot.docChanges().forEach( change => {
+
+        if (change.type == 'removed') {
+          this.campaigns.delete(change.doc.id);
+          this.unlisten_works(change.doc.id);
+        }
+        else {
+          var new_campaign = change.doc.data() as Campaign;
+          this.campaigns.set(change.doc.id, new_campaign);
+          if (change.type == 'added') {
+            this.unlisten_works(change.doc.id);
+            this.works.set(change.doc.id, new Map());
+            this.create_work_listener(change.doc.id);
+          }
+        }
       })
     });
   }
 
-  works_listener() {
-    this.unlisten_works();
-    var q = this.get_work_query();
-    this.q_works = onSnapshot( q, snapshot => {
-      snapshot.forEach( w => {
-        this.all_works.set(w.id, w.data() as Work);
-      });
-      this.select_campaign(this.selected_campaign);
-    } );
-  }
+  private create_work_listener(c_id: string) {
+    
+    var q = query( collection(this.firestore, 'campaigns/'.concat(c_id, '/works')) );
+    if (this.user.uid != this.campaigns.get(c_id)?.owner) {
+      q = query(q, or( where('beholders', 'array-contains', this.user.uid), where('supervisible', '==', true) ) );
+    }
+    return onSnapshot(q, snapshot => { snapshot.docChanges().forEach( change => {
 
-  private get_work_query() {
-    var works = query(this.works_col);
-    if (this.campaigns.get(this.selected_campaign)?.owner != this.user.uid) {works = query(works, or(where('beholders', 'array-contains', this.user.uid), where('supervisible', '==', true)));}
-    this.campaigns.forEach( c => {
-      var ind = 0
-      if (c.works.length <= 30) {
-        works = query(works, where('__name__', 'in', c.works))
+      if (change.type == 'removed') {
+        this.works.get(c_id)?.delete(change.doc.id);
       }
+
       else {
-        while (ind < c.works.length) {
-          if (c.works.length - ind <= 30) {query(works, where('__name__', 'in', c.works.slice(ind)));}
-          else {query(works, where('__name__', 'in', c.works.slice(ind, ind+30)));}
-          ind += 30;
-        }
+        var new_work = change.doc.data() as Work;
+        this.works.get(c_id)?.set(change.doc.id, new_work);
       }
-    })
-    return works;
-  }
 
-  select_campaign(c_id: string) {
-    if (this.campaigns.has(c_id)) {
-      this.selected_campaign = c_id;
-      this.works = new Map();
-      this.campaigns.get(c_id)?.works.forEach( w_id => {
-        if (this.all_works.has(w_id)) {this.works.set(w_id, this.all_works.get(w_id)??{beholders:[], filterables:[], identifiers:[], info:"THIS SHOULD NOT HAPPEN", name:"Impossible", supervisible:true});}
-      });
-    }
-    else {
-      this.selected_campaign = "";
-      this.works = new Map();
-    }
+    }) });
+
   }
 
   upload_campaign(c: Campaign) {
@@ -124,10 +118,8 @@ export class FirestoreService implements OnDestroy {
     } )
   }
 
-  upload_work(w: Work) {
-    addDoc( this.works_col, w).then( new_ref => {
-      this.all_works.set(new_ref.id, w);
-    })
+  upload_work(c_id: string, w: Work) {
+    addDoc( collection(this.firestore, 'campaigns/'.concat(c_id, '/works')), w);
   }
 
 }
@@ -137,7 +129,6 @@ export interface Campaign {
   name: string,
   owner: string,
   users: string[],
-  works: string[]
 }
 
 

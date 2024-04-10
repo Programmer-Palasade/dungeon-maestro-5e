@@ -1,12 +1,13 @@
-<a style="text-align:center">{{this.firestore.user.name}}
+
+<a style="text-align:center"><header style="text-align:center">{{this.firestore.user.name}}</header>
     <header style="text-align:center">Here are Campaigns attached to this user:</header>
     @for ( c of this.firestore.campaigns | keyvalue; track c.key) {
-        <li style="text-align:center"><button (click)="this.firestore.select_campaign(c.key)">{{c.value.name}}</button></li>
+        <li style="text-align:center"><button (click)="this.select_campaign(c.key)">{{c.value.name}}</button></li>
     }
 </a>
-<a>@if (this.firestore.selected_campaign) {
-    <header style="text-align:center"> Works in {{this.firestore.campaigns.get(this.firestore.selected_campaign)?.name}} </header>
-    @for (w of this.firestore.works | keyvalue; track w.key) {
+<a>@if (this.firestore.campaigns.has(this.selected_campaign)) {
+    <header style="text-align:center"> Works in {{this.firestore.campaigns.get(this.selected_campaign)?.name}} </header>
+    @for (w of this.firestore.works.get(this.selected_campaign) | keyvalue; track w.key) {
         <body style="text-align:center">{{w.value.name}}</body>
         <body style="text-align:center">{{w.value.info}}</body>
     }

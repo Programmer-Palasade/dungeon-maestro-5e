@@ -13,7 +13,14 @@ export class LandingPageComponent {
 
   public firestore = inject(FirestoreService);
 
+  public selected_campaign = "";
+
   constructor () {
+  }
+
+  public select_campaign(c_id: string) {
+    if (this.firestore.campaigns.has(c_id)) { this.selected_campaign = c_id; return true; }
+    return false;
   }
 
 }
