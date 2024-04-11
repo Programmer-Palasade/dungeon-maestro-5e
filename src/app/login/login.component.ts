@@ -2,11 +2,12 @@ import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { AuthService } from '../shared/auth.service';
 import { Router } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatButtonModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
