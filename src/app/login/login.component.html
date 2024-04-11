@@ -1,4 +1,6 @@
 <header style="text-align:center">
 @if (!this.auth.logged_in) {<button mat-raised-button (click)="login()">Login</button>}
-@if (this.auth.logged_in) {<button mat-raised-button (click)="logout()">Logout</button>}
+@else {
+    {{this.router.navigate(['home'])}}
+}
 </header>

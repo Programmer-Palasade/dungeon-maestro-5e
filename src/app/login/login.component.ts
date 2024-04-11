@@ -22,8 +22,4 @@ export class LoginComponent {
     return await this.auth.login_google();
   }
 
-  async logout() {
-    return await this.auth.logout();
-  }
-
 }
