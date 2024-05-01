@@ -4,8 +4,8 @@
 
 $dark-theme: mat.define-dark-theme((
 color: (
-    primary: mat.define-palette(mat.$amber-palette),
-    accent: mat.define-palette(mat.$blue-palette)
+    primary: mat.define-palette(mat.$deep-orange-palette, 900, 700),
+    accent: mat.define-palette(mat.$blue-palette, A400, A100),
 ),
     typography: mat.define-typography-config(),
     density: 0,
@@ -13,20 +13,36 @@ color: (
 
 $light-theme: mat.define-light-theme((
 color: (
-    primary: mat.define-palette(mat.$deep-purple-palette),
+    primary: mat.define-palette(mat.$deep-purple-palette, 500),
     accent: mat.define-palette(mat.$amber-palette)
 ),
 ));
 
-@include mat.core-theme($dark-theme);
-@include mat.button-theme($dark-theme);
-html { color: white; background-color: mat.get-theme-color($dark-theme, background, background); }
+$final-theme: $dark-theme;
 
 @media (prefers-color-scheme: light) {
-    @include mat.core-theme($light-theme);
-    @include mat.button-theme($light-theme);
-    html { color: black; background-color: mat.get-theme-color($light-theme, background, background); }
+    $final-theme: $light-theme;
 }
+
+@include mat.all-component-themes($final-theme);
+html { color: mat.get-theme-color($final-theme, 'foreground', 'text'); background-color: mat.get-theme-color($final-theme, 'background', 'background'); }
 
 html, body { height: 100% }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+
+.drawer_content {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
+.body_content {
+    display: inline;
+    height: auto;
+}
+
+.drawer {
+    padding: 20px;
+}

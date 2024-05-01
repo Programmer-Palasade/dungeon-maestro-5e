@@ -4,12 +4,13 @@ import { MatToolbarModule } from '@angular/material/toolbar'
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from './shared/auth.service';
+import { MatSidenavModule } from '@angular/material/sidenav';
 
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, MatToolbarModule, MatButtonModule, MatIconModule],
+  imports: [RouterOutlet, MatToolbarModule, MatButtonModule, MatIconModule, MatSidenavModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
@@ -19,8 +20,8 @@ export class AppComponent {
   auth = inject(AuthService);
 
   public async logout() {
-    this.auth.logout();
+    await this.auth.logout();
     this.router.navigate(['login']);
   }
-  
+
 }

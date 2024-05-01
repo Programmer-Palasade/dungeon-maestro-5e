@@ -1,6 +1,7 @@
 import { Injectable, OnDestroy, inject } from '@angular/core';
 import { EMPTY, Observable, Subscription } from 'rxjs';
 import { Auth, User, user, signInWithPopup, GoogleAuthProvider, signOut } from '@angular/fire/auth';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -8,6 +9,7 @@ import { Auth, User, user, signInWithPopup, GoogleAuthProvider, signOut } from '
 export class AuthService implements OnDestroy {
 
   private auth = inject(Auth);
+  private router = inject(Router);
   private google_provider = new GoogleAuthProvider();
 
   public readonly user: Observable<User | null> = EMPTY;
@@ -20,8 +22,11 @@ export class AuthService implements OnDestroy {
     this.google_provider.addScope('profile');
     if (this.auth) {
       this.user = user(this.auth);
-      this.userDisposable = user(this.auth).subscribe(u => {
+      this.userDisposable = this.user.subscribe(u => {
         this.logged_in = (u != null);
+        if (!this.logged_in) {
+          this.router.navigate(['login']);
+        }
       });
     }
    }
