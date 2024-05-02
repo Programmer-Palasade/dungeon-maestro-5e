@@ -9,7 +9,7 @@
         <div class="body-content"><router-outlet></router-outlet></div>
     </mat-sidenav-content>
 
-<mat-sidenav #sidenav class="drawer-content" position="end">
+<mat-sidenav #sidenav class="drawer-content" position="end" [fixedInViewport]="true">
     @if (!this.auth.logged_in) {
         <button mat-button (click)="this.router.navigate(['login'])">Login</button>
     }
