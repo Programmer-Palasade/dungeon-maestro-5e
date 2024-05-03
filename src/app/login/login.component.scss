@@ -1,4 +1,3 @@
-
 .login-page {
     text-align: center;
     background-image: url("../../assets/img/login-background.jpg");
@@ -79,12 +78,12 @@
     text-align: center;
 }
 
-.login-form p {
-    margin: 20px;
+.link {
     cursor: pointer;
+    color: #FFE980;
 
     &:hover {
-        color: #FFE980;
+        color: #cebd66;
     }
 }
 
@@ -109,6 +108,14 @@
     cursor: pointer;
 }
 
+.login-form button:disabled {
+    background-color: #9e9e9e;
+    cursor:not-allowed;
+
+    &:hover {
+        background-color: #9e9e9e;
+    }
+}
 .login-form button:hover {
     background-color: #cebd66;
 }

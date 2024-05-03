@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy, inject } from '@angular/core';
 import { EMPTY, Observable, Subscription } from 'rxjs';
-import { Auth, User, user, signInWithPopup, GoogleAuthProvider, signOut } from '@angular/fire/auth';
+import { Auth, User, user, signInWithPopup, GoogleAuthProvider, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 
 @Injectable({
@@ -35,8 +35,16 @@ export class AuthService implements OnDestroy {
      this.userDisposable?.unsubscribe();
    }
 
+   async login_email(email: string, password: string) {
+    return await signInWithEmailAndPassword(this.auth, email, password);
+   }
+
    async login_google() {
     return await signInWithPopup(this.auth, this.google_provider);
+   }
+
+   async signup_email(email: string, password: string) {
+    return await createUserWithEmailAndPassword(this.auth, email, password);
    }
 
    async logout() {
