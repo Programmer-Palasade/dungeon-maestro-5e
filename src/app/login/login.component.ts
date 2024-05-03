@@ -22,4 +22,8 @@ export class LoginComponent {
     return await this.auth.login_google();
   }
 
+  recoverPassword(){
+    console.log("Hi");
+  }
+
 }
