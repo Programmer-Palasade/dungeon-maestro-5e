@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy, inject } from '@angular/core';
-import { Firestore, collection, doc, query, or, where, onSnapshot, getDoc, setDoc, addDoc, Query, DocumentData } from '@angular/fire/firestore';
+import { Firestore, collection, doc, query, or, where, onSnapshot, getDoc, setDoc, addDoc } from '@angular/fire/firestore';
 import { Subscription } from 'rxjs';
 import { AuthService } from './auth.service';
 import { Campaign, User, Work } from './interfaces';
@@ -19,6 +19,7 @@ export class FirestoreService implements OnDestroy {
   private q_works: Map<string, Unsubscribe> = new Map();
 
   public user: User = {uid:"", name:"", email:""};
+  private associated_users: Map<string, User> = new Map();
   public campaigns: Map<string, Campaign> = new Map();
   public works: Map<string, Map<string, Work>> = new Map();
 
@@ -41,6 +42,7 @@ export class FirestoreService implements OnDestroy {
           this.listener();
         });
       }
+      console.log(this.associated_users);
     });
   }
 
@@ -73,7 +75,7 @@ export class FirestoreService implements OnDestroy {
     this.unlisten_campaigns();
     const q_c = query( this.campaigns_col, or( where('owner', '==', this.user.uid), where('users', 'array-contains', this.user.uid) ) )
     this.q_campaign = onSnapshot( q_c, snapshot => {
-      snapshot.docChanges().forEach( change => {
+      snapshot.docChanges().forEach( async change => {
 
         if (change.type == 'removed') {
           this.campaigns.delete(change.doc.id);
@@ -82,6 +84,16 @@ export class FirestoreService implements OnDestroy {
         else {
           var new_campaign = change.doc.data() as Campaign;
           this.campaigns.set(change.doc.id, new_campaign);
+
+          for (let u_id of new_campaign.users.concat(new_campaign.owner)) {
+            const user_snap = await getDoc( doc(this.firestore, 'users/'.concat(u_id)) );
+            if (user_snap.exists() && !this.associated_users.has(u_id)) {
+              var user_data = user_snap.data() as User;
+              user_data.uid = u_id;
+              this.associated_users.set(u_id, user_data);
+            }
+          }
+
           if (change.type == 'added') {
             this.unlisten_works(change.doc.id);
             this.works.set(change.doc.id, new Map());
@@ -113,14 +125,18 @@ export class FirestoreService implements OnDestroy {
 
   }
 
-  upload_campaign(c: Campaign) {
+  upload_campaign(c: Campaign): void {
     addDoc(this.campaigns_col, c).then( new_ref => {
       this.campaigns.set(new_ref.id, c);
     } )
   }
 
-  upload_work(c_id: string, w: Work) {
+  upload_work(c_id: string, w: Work): void {
     addDoc( collection(this.firestore, 'campaigns/'.concat(c_id, '/works')), w);
+  }
+
+  get_username(u_id: string): string {
+    return this.associated_users.get(u_id)?.name ?? 'Unknown Adventurer';
   }
 
 }

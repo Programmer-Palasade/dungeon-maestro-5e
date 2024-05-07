@@ -1,0 +1,17 @@
+@if (!this.firestore.campaigns.has(this.c_id)) { {{this.router.navigate(['/home'])}} }
+
+<mat-card>
+    <mat-card-header class="center-content">
+        <mat-card-title>
+            <mat-form-field appearance="outline" color="primary">
+                <mat-label>Campaign Name</mat-label>
+                <input matInput value="{{this.campaign.name}}">
+            </mat-form-field>
+        </mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="center-content">
+        <span>Owner: {{ this.firestore.get_username(this.campaign.owner) }}</span>
+    </mat-card-content>
+</mat-card>
+
+

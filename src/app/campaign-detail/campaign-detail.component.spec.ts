@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DbViewerComponent } from './db-viewer.component';
+import { CampaignDetailComponent } from './campaign-detail.component';
 
-describe('DbViewerComponent', () => {
-  let component: DbViewerComponent;
-  let fixture: ComponentFixture<DbViewerComponent>;
+describe('CampaignDetailComponent', () => {
+  let component: CampaignDetailComponent;
+  let fixture: ComponentFixture<CampaignDetailComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DbViewerComponent]
+      imports: [CampaignDetailComponent]
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(DbViewerComponent);
+    fixture = TestBed.createComponent(CampaignDetailComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
