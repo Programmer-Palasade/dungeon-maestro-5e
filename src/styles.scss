@@ -35,3 +35,13 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     justify-content: center;
     align-content: center;
 }
+
+.centered-card {
+    display: flex;
+    justify-self: center;
+    justify-content: center;
+    align-self: center;
+    align-content: center;
+    max-width: 350px;
+    margin: 8px auto;
+}

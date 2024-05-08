@@ -42,7 +42,6 @@ export class FirestoreService implements OnDestroy {
           this.listener();
         });
       }
-      console.log(this.associated_users);
     });
   }
 

@@ -1,17 +1,40 @@
 @if (!this.firestore.campaigns.has(this.c_id)) { {{this.router.navigate(['/home'])}} }
 
-<mat-card>
+<mat-card class="centered-card">
     <mat-card-header class="center-content">
         <mat-card-title>
             <mat-form-field appearance="outline" color="primary">
                 <mat-label>Campaign Name</mat-label>
-                <input matInput value="{{this.campaign.name}}">
+                <input #nameInput matInput value="{{this.campaign.name}}" (blur)="update_campaign(nameInput.value)">
             </mat-form-field>
         </mat-card-title>
     </mat-card-header>
     <mat-card-content class="center-content">
-        <span>Owner: {{ this.firestore.get_username(this.campaign.owner) }}</span>
+        <span class="center-content">Owner: {{ this.firestore.get_username(this.campaign.owner) }}</span>
+        <span class="center-content">
+            @for (user of this.campaign.users; track user) {
+                <button mat-flat-button color="accent" disabled="{{!this.works.has(user)}}">{{this.firestore.get_username(user)}}</button>
+            }
+            <button mat-mini-fab><mat-icon>plus_one</mat-icon></button>
+        </span>
+        <span class="center-content">
+            <button mat-fab (click)="debug()"><mat-icon>save</mat-icon></button>
+        </span>
     </mat-card-content>
 </mat-card>
 
+<mat-divider></mat-divider>
 
+@for (entry of this.works | keyvalue; track entry.key) {
+        <mat-card class="centered-card">
+            <mat-card-header class="center-content">
+                <mat-card-title><button mat-button (click)="this.router.navigate(['campaigns/'.concat(this.c_id, '/', entry.key)])">{{entry.value.name}}</button></mat-card-title>
+                <mat-card-subtitle>
+                    @for (f of entry.value.filterables; track f) {
+                        <mat-chip>{{f}}</mat-chip>
+                    }
+                </mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-footer></mat-card-footer>
+        </mat-card>
+}
