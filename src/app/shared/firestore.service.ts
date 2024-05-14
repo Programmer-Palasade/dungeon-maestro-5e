@@ -124,14 +124,22 @@ export class FirestoreService implements OnDestroy {
 
   }
 
-  upload_campaign(c: Campaign): void {
+  upload_new_campaign(c: Campaign): void {
     addDoc(this.campaigns_col, c).then( new_ref => {
       this.campaigns.set(new_ref.id, c);
     } )
   }
 
-  upload_work(c_id: string, w: Work): void {
+  upload_campaign_changes(c_id: string) {
+    setDoc( doc(this.firestore, 'campaigns/'.concat(c_id)), this.campaigns.get(c_id) );
+  }
+
+  upload_new_work(c_id: string, w: Work): void {
     addDoc( collection(this.firestore, 'campaigns/'.concat(c_id, '/works')), w);
+  }
+
+  upload_work_changes(c_id: string, w_id: string) {
+    setDoc( doc(this.firestore, 'campaigns/'.concat(c_id, '/works', w_id)), this.works.get(c_id)?.get(w_id) );
   }
 
   get_username(u_id: string): string {

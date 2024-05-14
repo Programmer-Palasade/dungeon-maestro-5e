@@ -36,11 +36,8 @@ export class CampaignDetailComponent {
     return this.firestore.works.get(this.c_id) ?? new Map();
   }
 
-  update_campaign(name: string) {
+  update_name(name: string) {
     this.campaign.name = name;
-  }
-
-  debug() {
   }
 
 }

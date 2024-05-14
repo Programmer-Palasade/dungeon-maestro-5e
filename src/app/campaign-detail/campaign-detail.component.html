@@ -5,7 +5,7 @@
         <mat-card-title>
             <mat-form-field appearance="outline" color="primary">
                 <mat-label>Campaign Name</mat-label>
-                <input #nameInput matInput value="{{this.campaign.name}}" (blur)="update_campaign(nameInput.value)">
+                <input #nameInput matInput value="{{this.campaign.name}}" (blur)="update_name(nameInput.value)">
             </mat-form-field>
         </mat-card-title>
     </mat-card-header>
@@ -18,7 +18,7 @@
             <button mat-mini-fab><mat-icon>plus_one</mat-icon></button>
         </span>
         <span class="center-content">
-            <button mat-fab (click)="debug()"><mat-icon>save</mat-icon></button>
+            <button mat-fab (click)="this.firestore.upload_campaign_changes(this.c_id)"><mat-icon>save</mat-icon></button>
         </span>
     </mat-card-content>
 </mat-card>
