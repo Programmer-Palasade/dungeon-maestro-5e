@@ -5,7 +5,11 @@
   "projects": {
     "dungeon-maestro-app": {
       "projectType": "application",
-      "schematics": {},
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
@@ -18,6 +22,7 @@
             "browser": "src/main.ts",
             "polyfills": [
               "zone.js"
+              
             ],
             "tsConfig": "tsconfig.app.json",
             "assets": [
@@ -25,9 +30,14 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "src/styles"
+              ]
+            }
           },
           "configurations": {
             "production": {
@@ -84,12 +94,20 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "src/styles"
+              ]
+            }
           }
         }
       }
     }
+  },
+  "cli": {
+    "analytics": "6cc3e7fd-6beb-44ea-ac66-1f644ab1bddc"
   }
 }

@@ -1,26 +1,23 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { FirestoreService, Campaign, Work, User } from '../shared/firestore.service';
+import { Router } from '@angular/router';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatButtonModule } from '@angular/material/button';
+import { MatGridListModule } from '@angular/material/grid-list';
 
 @Component({
   selector: 'app-landing-page',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatSidenavModule, MatButtonModule, MatGridListModule],
   templateUrl: './landing-page.component.html',
-  styleUrl: './landing-page.component.css'
+  styleUrl: './landing-page.component.scss'
 })
 export class LandingPageComponent {
 
-  public firestore = inject(FirestoreService);
+  public router = inject(Router);
 
-  public selected_campaign = "";
 
   constructor () {
-  }
-
-  public select_campaign(c_id: string) {
-    if (this.firestore.campaigns.has(c_id)) { this.selected_campaign = c_id; return true; }
-    return false;
   }
 
 }

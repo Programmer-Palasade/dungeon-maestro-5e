@@ -1,0 +1,48 @@
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+$dark-theme: mat.define-dark-theme((
+color: (
+    primary: mat.define-palette(mat.$deep-orange-palette, 900, 700),
+    accent: mat.define-palette(mat.$blue-palette, A400, A100),
+),
+    typography: mat.define-typography-config(),
+    density: 0,
+));
+
+$light-theme: mat.define-light-theme((
+color: (
+    primary: mat.define-palette(mat.$deep-purple-palette, 500),
+    accent: mat.define-palette(mat.$amber-palette)
+),
+));
+
+$final-theme: $dark-theme;
+
+@media (prefers-color-scheme: light) {
+    $final-theme: $light-theme;
+}
+
+@include mat.all-component-themes($final-theme);
+html { color: mat.get-theme-color($final-theme, 'foreground', 'text'); background-color: mat.get-theme-color($final-theme, 'background', 'background'); }
+
+html, body { height: 100% }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.center-content {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    margin: 2px;
+}
+
+.centered-card {
+    display: flex;
+    justify-self: center;
+    justify-content: center;
+    align-self: center;
+    align-content: center;
+    max-width: 350px;
+    margin: 8px auto;
+}

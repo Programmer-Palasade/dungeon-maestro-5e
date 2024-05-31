@@ -1,3 +1,27 @@
-<app-login></app-login>
-<p></p>
-<div><router-outlet></router-outlet></div>
+<header>
+    @if (this.auth.logged_in) {
+        <mat-sidenav-container>
+            <mat-sidenav-content>
+                <mat-toolbar>
+                    <button mat-icon-button mat-tooltip="Home" (click)="this.router.navigate(['home']);"><mat-icon>home</mat-icon></button>
+                    <span class="flex-spacer">DungeonMaestro 5e</span>
+                    <button mat-icon-button mat-tooltip="Menu" (click)="sidenav.toggle()"><mat-icon>menu</mat-icon></button>
+                </mat-toolbar>
+        
+                
+            </mat-sidenav-content>
+        
+        <mat-sidenav #sidenav class="drawer-content" position="end" [fixedInViewport]="true">
+            @if (!this.auth.logged_in) {
+                <button mat-button (click)="this.router.navigate(['login'])">Login</button>
+            }
+            @else {
+                <button mat-button (click)="this.logout()">Logout</button>
+            }
+        </mat-sidenav>
+        </mat-sidenav-container>
+    }
+</header>
+<main>
+    <div class="body-content"><router-outlet></router-outlet></div>
+</main>
