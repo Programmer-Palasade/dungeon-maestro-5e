@@ -1,6 +1,51 @@
-<header style="text-align:center">
-@if (!this.auth.logged_in) {<button mat-raised-button (click)="login()">Login</button>}
-@else {
-    {{this.router.navigate(['home'])}}
+@if (!this.auth.logged_in) {
+    <main class="login-page">
+        <img class="primary-logo">
+    @if (this.onLogin && !this.onPasswordReset) {
+        <div class="login-form">
+            <h2>Log In</h2>
+            <div>
+                <input type="text" name="email" placeholder="Email" [(ngModel)]="email" required>
+                <input type="password" name="password" placeholder="Password" [(ngModel)]="password" required>
+                <button type="submit" (click)="login_email(email, password)">Log In</button>
+                <p class="link" (click)="toggleRecoverPassword()">Forget Password?</p>
+                <p>New Dungeon Delver? <span class="link" (click)="toggleLogin()">Create an account</span></p>
+            </div>
+        </div>
+    }
+    @else if (!this.onPasswordReset) {
+        <div class="login-form">
+            <h2>Sign Up</h2>
+            <div>
+                <input type="text" name="email" placeholder="Email" [(ngModel)]="email" required>
+                <input type="password" name="password" placeholder="Password" [(ngModel)]="password" required>
+                <input type="password" name="c-password" placeholder="Confirm Password" [(ngModel)]="confirmPassword" required>
+                <button type="submit" (click)="signup(email, password)" [disabled]="hasInvalidInfo()">Sign Up</button>
+                <p>Already have an account? <span class="link" (click)="toggleLogin()">Log in</span></p>
+            </div>
+        </div>
+    }
+    @else {
+        <div class="login-form">
+            <h2>Reset your Password</h2>
+            <div>
+                <input type="text" name="email" placeholder="Email" [(ngModel)]="email" required>
+                <button type="submit" (click)="sendResetEmail(email)">Send Email</button>
+                <p><span class="link" (click)="toggleRecoverPassword()">Back</span></p>
+            </div>
+        </div>
+    }
+
+    @if (!this.onPasswordReset) {
+        <hr class="divider">
+
+        <div class="quick-login-box">
+            <button type="button" class="login-google" (click)="login()">Sign in with Google</button>
+        </div>
+    }
+    </main>
 }
-</header>
+
+@else {
+    <main>{{this.router.navigate(['home'])}}</main>    
+}

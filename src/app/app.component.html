@@ -13,8 +13,7 @@
     @if (!this.auth.logged_in) {
         <button mat-button (click)="this.router.navigate(['login'])">Login</button>
     }
-    @else {
-        <button mat-button (click)="this.logout()">Logout</button>
-    }
-</mat-sidenav>
-</mat-sidenav-container>
+</header>
+<main>
+    <div class="body-content"><router-outlet></router-outlet></div>
+</main>
