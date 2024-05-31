@@ -23,9 +23,16 @@ export class LoginComponent {
   password:string = "";
   confirmPassword:string = "";
   onLogin: boolean = true;
+  onPasswordReset: boolean = false;
 
   async login() {
     return await this.auth.login_google();
+  }
+
+  async sendResetEmail(email: string) {
+    this.email = "";
+    this.toggleRecoverPassword();
+    return await this.auth.passwordReset(email);
   }
 
   async login_email(email: string, password: string){
@@ -55,8 +62,15 @@ export class LoginComponent {
     this.onLogin = !this.onLogin;
   }
 
-  recoverPassword(){
-    console.log("Hi");
+  toggleRecoverPassword(){
+    this.password = "";
+    this.confirmPassword = "";
+    this.onLogin = !this.onLogin;
+    this.onPasswordReset = !this.onPasswordReset;
   }
 
 }
+function toggleRecoverPassword() {
+  throw new Error('Function not implemented.');
+}
+
