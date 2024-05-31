@@ -27,11 +27,11 @@ export class WorkDetailComponent {
   @Input({required: true}) c_id = '';
   @Input({required: true}) w_id = '';
 
-  get campaign() {
+  get campaign(): Campaign {
     return this.firestore.campaigns.get(this.c_id) ?? {name: 'Undefined', owner: 'Unknown', users: []};
   }
 
-  get work() {
+  get work(): Work {
     return this.firestore.works.get(this.c_id)?.get(this.w_id) ?? {beholders: [], filterables: [], identifiers: [], info: '', name: '', supervisible: false}
   }
 
