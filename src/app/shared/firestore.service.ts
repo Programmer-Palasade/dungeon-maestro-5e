@@ -2,6 +2,7 @@ import { Injectable, OnDestroy, inject } from '@angular/core';
 import { Firestore, collection, doc, query, or, where, onSnapshot, getDoc, setDoc, addDoc, Query, DocumentData } from '@angular/fire/firestore';
 import { Subscription } from 'rxjs';
 import { AuthService } from './auth.service';
+import { Campaign, User, Work } from './interfaces';
 import { Unsubscribe } from '@angular/fire/auth';
 
 @Injectable({
@@ -122,28 +123,4 @@ export class FirestoreService implements OnDestroy {
     addDoc( collection(this.firestore, 'campaigns/'.concat(c_id, '/works')), w);
   }
 
-}
-
-
-export interface Campaign {
-  name: string,
-  owner: string,
-  users: string[],
-}
-
-
-export interface User {
-  uid: string,
-  name: string,
-  email: string
-}
-
-
-export interface Work {
-  beholders: string[],
-  filterables: string[],
-  identifiers: string[],
-  info: string,
-  name: string,
-  supervisible: boolean
 }
