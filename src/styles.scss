@@ -30,19 +30,19 @@ html { color: mat.get-theme-color($final-theme, 'foreground', 'text'); backgroun
 html, body { height: 100% }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
-
-.drawer_content {
+.center-content {
     display: flex;
-    height: 100%;
-    align-items: center;
     justify-content: center;
+    align-content: center;
+    margin: 2px;
 }
 
-.body_content {
-    display: inline;
-    height: auto;
-}
-
-.drawer {
-    padding: 20px;
+.centered-card {
+    display: flex;
+    justify-self: center;
+    justify-content: center;
+    align-self: center;
+    align-content: center;
+    max-width: 350px;
+    margin: 8px auto;
 }

@@ -1,22 +1,19 @@
-import { Component, Input, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { FirestoreService } from '../shared/firestore.service';
-import { Campaign, Work } from '../shared/interfaces';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatGridListModule } from '@angular/material/grid-list';
 
 @Component({
-  selector: 'app-db-viewer',
+  selector: 'app-list-viewer',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatCardModule],
-  templateUrl: './db-viewer.component.html',
-  styleUrl: './db-viewer.component.css'
+  imports: [CommonModule, MatButtonModule, MatCardModule, MatGridListModule],
+  templateUrl: './list-viewer.component.html',
+  styleUrl: './list-viewer.component.scss'
 })
-export class DbViewerComponent {
-
-  @Input() selected_campaign: string = '';
-  @Input() selected_work: string = '';
+export class ListViewerComponent {
 
   public router = inject(Router);
   public firestore = inject(FirestoreService);

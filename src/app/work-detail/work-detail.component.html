@@ -1,0 +1,23 @@
+<mat-card class="centered-card">
+    <mat-card-header class="center-content">
+        <mat-card-title>{{this.work.name}}</mat-card-title>
+    </mat-card-header>
+    <mat-divider></mat-divider>
+    <mat-card-content class="center-content">
+        <span class="center-content">Filterables</span>
+        <mat-chip-set class="center-content">
+            @for (filterable of this.work.filterables; track filterable) {
+                <mat-chip>{{filterable}}</mat-chip>
+            }
+        </mat-chip-set>
+        <mat-divider></mat-divider>
+        <span class="center-content">Beholders</span>
+        <mat-chip-set class="center-content">
+            @for (u_id of this.work.beholders; track u_id) {
+                <mat-chip>{{this.firestore.get_username(u_id)}}</mat-chip>
+            }
+        </mat-chip-set>
+        <mat-divider></mat-divider>
+        <p>{{this.work.info}}</p>
+    </mat-card-content>
+</mat-card>

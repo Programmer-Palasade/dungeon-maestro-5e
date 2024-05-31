@@ -6,7 +6,7 @@ export interface Campaign {
 }
 
 export interface User {
-    uid: string,
+    uid: string | undefined,
     name: string,
     email: string
 }
