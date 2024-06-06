@@ -16,7 +16,13 @@
                 <button mat-button (click)="this.router.navigate(['login'])">Login</button>
             }
             @else {
-                <button mat-button (click)="this.logout()">Logout</button>
+                <div>
+                    <button mat-button (click)="this.router.navigate(['notifications'])">Notifications</button>
+                </div>
+
+                <div>
+                    <button mat-button (click)="this.logout()">Logout</button>
+                </div>
             }
         </mat-sidenav>
         </mat-sidenav-container>

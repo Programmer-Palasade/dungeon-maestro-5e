@@ -23,6 +23,19 @@
     </mat-card-content>
 </mat-card>
 
+<div style="text-align: center;">
+    <h3>Invite Adventurers</h3>
+    <div style="display: inline-block;">
+        <mat-form-field appearance="outline" color="primary">
+            <mat-label>User's Email</mat-label>
+            <div>
+                <input  matInput [(ngModel)]="this.invitee">
+            </div>
+        </mat-form-field>
+        <button mat-button (click)="invite_user(this.invitee)">Invite</button>
+    </div>
+</div>
+
 <mat-divider></mat-divider>
 
 @for (entry of this.works | keyvalue; track entry.key) {

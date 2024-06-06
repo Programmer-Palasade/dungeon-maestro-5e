@@ -10,11 +10,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDivider, MatDividerModule } from '@angular/material/divider';
 import { Campaign, Work } from '../shared/interfaces';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-campaign-detail',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatCardModule, MatInputModule, MatFormFieldModule, MatIconModule, MatChipsModule, MatDividerModule],
+  imports: [MatButtonModule, CommonModule, FormsModule, MatButtonModule, MatCardModule, MatInputModule, MatFormFieldModule, MatIconModule, MatChipsModule, MatDividerModule],
   templateUrl: './campaign-detail.component.html',
   styleUrl: './campaign-detail.component.scss'
 })
@@ -22,6 +23,8 @@ export class CampaignDetailComponent {
   
   public router = inject(Router);
   public firestore = inject(FirestoreService);
+
+  invitee : string = "";
 
   @Input({required: true}) c_id = '';
   
@@ -38,6 +41,10 @@ export class CampaignDetailComponent {
 
   update_name(name: string) {
     this.campaign.name = name;
+  }
+
+  invite_user(email: string) {
+    console.log(email);
   }
 
 }
