@@ -125,7 +125,7 @@ export class FirestoreService implements OnDestroy {
   }
 
   async upload_new_campaign(c: Campaign): Promise<string> {
-    return await addDoc(this.campaigns_col, c).then( new_ref => { return new_ref.id; } );
+    return addDoc(this.campaigns_col, c).then( new_ref => { return new_ref.id; } );
   }
 
   upload_campaign_changes(c_id: string) {
@@ -133,7 +133,7 @@ export class FirestoreService implements OnDestroy {
   }
 
   async upload_new_work(c_id: string, w: Work): Promise<string> {
-    return await addDoc( collection(this.firestore, 'campaigns/'.concat(c_id, '/works')), w).then( new_ref => { return new_ref.id; } );
+    return addDoc( collection(this.firestore, 'campaigns/'.concat(c_id, '/works')), w).then( new_ref => { return new_ref.id; } );
   }
 
   upload_work_changes(c_id: string, w_id: string) {

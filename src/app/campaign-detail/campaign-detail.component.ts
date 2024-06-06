@@ -8,7 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatDivider, MatDividerModule } from '@angular/material/divider';
+import { MatDividerModule } from '@angular/material/divider';
 import { Campaign, Work } from '../shared/interfaces';
 
 @Component({
@@ -34,6 +34,12 @@ export class CampaignDetailComponent {
 
   get works(): Map<string, Work> {
     return this.firestore.works.get(this.c_id) ?? new Map();
+  }
+
+  async new_work() {
+    var new_w: Work = {beholders: [], filterables: [], identifiers: [], info: "An extraordinarily ordinary and descriptive describation.", name: "Titilating Titular Title", supervisible: false};
+    const new_wid = await this.firestore.upload_new_work(this.c_id, new_w);
+    this.router.navigate(['/campaigns/'.concat(this.c_id, '/', new_wid)]);
   }
 
   update_name(name: string) {
