@@ -22,6 +22,9 @@ export class CampaignDetailComponent {
   
   public router = inject(Router);
   public firestore = inject(FirestoreService);
+  
+  public edit_mode = false;
+  public changes_made = false;
 
   @Input({required: true}) c_id = '';
   
@@ -36,14 +39,17 @@ export class CampaignDetailComponent {
     return this.firestore.works.get(this.c_id) ?? new Map();
   }
 
+  
+
   async new_work() {
     var new_w: Work = {beholders: [], filterables: [], identifiers: [], info: "An extraordinarily ordinary and descriptive describation.", name: "Titilating Titular Title", supervisible: false};
     const new_wid = await this.firestore.upload_new_work(this.c_id, new_w);
-    this.router.navigate(['/campaigns/'.concat(this.c_id, '/', new_wid)]);
+    // this.router.navigate(['/campaigns/'.concat(this.c_id, '/', new_wid)]);
   }
 
   update_name(name: string) {
     this.campaign.name = name;
+    this.changes_made = true;
   }
 
 }

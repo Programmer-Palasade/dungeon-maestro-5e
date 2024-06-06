@@ -25,7 +25,7 @@ export class ListViewerComponent {
   public async new_campaign() {
     var new_c: Campaign = { name: "New Adventure", owner: this.firestore.user.uid??"Unknown Dungeon Architect", users: [] };
     const new_cid = await this.firestore.upload_new_campaign(new_c);
-    this.router.navigate(['/campaigns/'.concat(new_cid)]);
+    // this.router.navigate(['/campaigns/'.concat(new_cid)]);
   }
 
 }

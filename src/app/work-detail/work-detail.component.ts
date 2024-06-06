@@ -24,6 +24,9 @@ export class WorkDetailComponent {
   public firestore = inject(FirestoreService);
   public seperatorKeyCodes = [ENTER, COMMA];
 
+  public edit_mode = false;
+  public changes_made = false;
+
   @Input({required: true}) c_id = '';
   @Input({required: true}) w_id = '';
 

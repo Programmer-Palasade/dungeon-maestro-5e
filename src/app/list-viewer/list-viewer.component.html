@@ -4,6 +4,9 @@
             <mat-card-title class="center-content"><button mat-button (click)="this.router.navigate(['/campaigns/'.concat(entry.key)])">{{entry.value.name}}</button></mat-card-title>
             <mat-card-subtitle class="center-content"> {{ this.firestore.get_username(entry.value.owner) }} </mat-card-subtitle>
         </mat-card-content>
+        <mat-card-actions align="end">
+            <button mat-icon-button><mat-icon>delete</mat-icon></button>
+        </mat-card-actions>
     </mat-card>
 }
 <div class="center-content"><button mat-fab (click)="this.new_campaign()"><mat-icon>add</mat-icon></button></div>
