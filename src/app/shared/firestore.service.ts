@@ -2,7 +2,7 @@ import { Injectable, OnDestroy, inject } from '@angular/core';
 import { Firestore, collection, doc, query, or, where, onSnapshot, getDoc, setDoc, addDoc, getDocs, updateDoc, arrayUnion } from '@angular/fire/firestore';
 import { Subscription } from 'rxjs';
 import { AuthService } from './auth.service';
-import { Campaign, User, Work } from './interfaces';
+import { Campaign, CampaignRequest, User, Work } from './interfaces';
 import { Unsubscribe } from '@angular/fire/auth';
 
 @Injectable({
@@ -146,9 +146,14 @@ export class FirestoreService implements OnDestroy {
     return this.associated_users.get(u_id)?.name ?? 'Unknown Adventurer';
   }
 
-  send_campaign_invite(u_id: string, c_id: string): void {
+  send_campaign_invite(u_id: string, c_id: string, c_name: string): void {
+    const new_request = {
+      cid: c_id,
+      cname: c_name
+    }
+    
     const data = {
-      requests: arrayUnion(c_id)
+      requests: arrayUnion(new_request)
     }
     updateDoc(doc(this.firestore, 'users/'.concat(u_id)), data);
   }

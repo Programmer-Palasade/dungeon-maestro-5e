@@ -45,7 +45,7 @@ export class CampaignDetailComponent {
 
   invite_user(email: string) {
     const uid = this.firestore.get_user_id(email).then(
-      value => this.firestore.send_campaign_invite(value, this.c_id)
+      value => this.firestore.send_campaign_invite(value, this.c_id, this.campaign.name)
     );
 
     this.invitee = "";
