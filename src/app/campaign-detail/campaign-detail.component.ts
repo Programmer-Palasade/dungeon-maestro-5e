@@ -44,7 +44,13 @@ export class CampaignDetailComponent {
   }
 
   invite_user(email: string) {
-    console.log(email);
+    const uid = this.firestore.get_user_id(email).then(
+      value => this.firestore.send_campaign_invite(value, this.c_id)
+    );
+
+    this.invitee = "";
+
+    alert("A request to join your campaign has been sent to ".concat(email))
   }
 
 }

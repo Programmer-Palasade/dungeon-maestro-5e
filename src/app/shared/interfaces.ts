@@ -8,7 +8,8 @@ export interface Campaign {
 export interface User {
     uid: string | undefined,
     name: string,
-    email: string
+    email: string,
+    requests: string[]
 }
 
 export interface Work {
