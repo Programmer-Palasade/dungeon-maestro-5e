@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy, inject } from '@angular/core';
-import { Firestore, collection, doc, query, or, where, onSnapshot, getDoc, setDoc, addDoc, getDocs, updateDoc, arrayUnion } from '@angular/fire/firestore';
+import { Firestore, collection, doc, query, or, where, onSnapshot, getDoc, setDoc, addDoc, getDocs, updateDoc, arrayUnion, arrayRemove } from '@angular/fire/firestore';
 import { Subscription } from 'rxjs';
 import { AuthService } from './auth.service';
 import { Campaign, CampaignRequest, User, Work } from './interfaces';
@@ -9,7 +9,6 @@ import { Unsubscribe } from '@angular/fire/auth';
   providedIn: 'root'
 })
 export class FirestoreService implements OnDestroy {
-
   private firestore = inject(Firestore);
   private auth = inject(AuthService);
   private user_sub: Subscription;
@@ -168,5 +167,21 @@ export class FirestoreService implements OnDestroy {
     } else {
       return "";
     }
+  }
+
+  accept_campaign_request(user_id: string, campaign_request: CampaignRequest) {
+    const data = {
+      users: arrayUnion(user_id)
+    }
+    updateDoc(doc(this.firestore, 'campaigns/'.concat(campaign_request.cid!)), data);
+
+    this.delete_campaign_request(user_id, campaign_request);
+  }
+
+  delete_campaign_request(user_id: string, campaign_request: CampaignRequest) {
+    const data = {
+      requests: arrayRemove(campaign_request)
+    }
+    updateDoc(doc(this.firestore, 'users/'.concat(user_id)), data);
   }
 }

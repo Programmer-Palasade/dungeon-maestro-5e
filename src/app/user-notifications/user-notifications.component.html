@@ -13,8 +13,8 @@
         </mat-card-subtitle>
 
         <mat-card-actions style="display: flex; justify-content: center;">
-            <button mat-button>Accept</button>
-            <button mat-button>Decline</button>
+            <button mat-button (click)="accept_request(request)">Accept</button>
+            <button mat-button (click)="decline_request(request)">Decline</button>
         </mat-card-actions>
     </mat-card>
 <>
