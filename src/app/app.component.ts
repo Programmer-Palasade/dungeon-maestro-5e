@@ -7,6 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from './shared/auth.service';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatGridListModule } from '@angular/material/grid-list';
+import { FirestoreService } from './shared/firestore.service';
 
 
 @Component({
@@ -20,6 +21,8 @@ export class AppComponent {
   title = 'dungeon-maestro-5e';
   router = inject(Router);
   auth = inject(AuthService);
+  firestore = inject(FirestoreService);
+
 
   public async logout() {
     await this.auth.logout();

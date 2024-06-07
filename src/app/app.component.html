@@ -5,7 +5,7 @@
                 <mat-toolbar>
                     <button mat-icon-button mat-tooltip="Home" (click)="this.router.navigate(['home']);"><mat-icon>home</mat-icon></button>
                     <span class="flex-spacer">DungeonMaestro 5e</span>
-                    <mat-icon matBadgeSize="small" matBadgePosition="before"  mat-icon-button mat-tooltip="Menu" (click)="sidenav.toggle()">menu</mat-icon>
+                    <mat-icon matBadgeSize="small" matBadgePosition="before" [matBadgeHidden]="this.firestore.user.requests.length == 0" matBadge={{this.firestore.user.requests.length}} mat-icon-button mat-tooltip="Menu" (click)="sidenav.toggle()">menu</mat-icon>
                 </mat-toolbar>
         
                 
@@ -17,7 +17,12 @@
             }
             @else {
                 <div>
-                    <button mat-button (click)="this.router.navigate(['notifications'])">Notifications</button>
+                    <button mat-button (click)="this.router.navigate(['notifications'])" >
+                        <span matBadgeSize="small" matBadgePosition="before" [matBadgeHidden]="this.firestore.user.requests.length == 0" matBadge={{this.firestore.user.requests.length}}>
+                            @if (this.firestore.user.requests.length > 0) {&nbsp; Notifications}
+                            @else {Notifications}
+                        </span>
+                    </button>
                 </div>
 
                 <div>
