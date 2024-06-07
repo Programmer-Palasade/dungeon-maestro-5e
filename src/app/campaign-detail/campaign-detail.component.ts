@@ -39,7 +39,12 @@ export class CampaignDetailComponent {
     return this.firestore.works.get(this.c_id) ?? new Map();
   }
 
-
+  save() {
+    if (this.changes_made) {
+      this.firestore.upload_campaign_changes(this.c_id);
+      this.changes_made = false;
+    }
+  }
 
   async new_work() {
     var new_w: Work = {beholders: [], filterables: [], identifiers: [], info: "An extraordinarily ordinary and descriptive describation.", name: "Titilating Titular Topic Title", supervisible: false};
