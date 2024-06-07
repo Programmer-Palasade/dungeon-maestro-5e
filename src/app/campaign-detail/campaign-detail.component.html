@@ -1,5 +1,9 @@
 @if (!this.firestore.campaigns.has(this.c_id)) { {{this.router.navigate(['/home'])}} }
 
+@if (this.firestore.user.uid == this.campaign.owner) {
+    <span class="center-content"><mat-slide-toggle (change)="this.edit()">Edit Mode: {{this.edit_mode}}</mat-slide-toggle></span>
+}
+
 @if (this.edit_mode) {
     <mat-card class="centered-card">
         <mat-card-header class="center-content">

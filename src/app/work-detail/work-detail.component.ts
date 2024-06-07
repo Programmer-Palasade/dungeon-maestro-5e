@@ -10,11 +10,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatChipEditedEvent, MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @Component({
   selector: 'app-work-detail',
   standalone: true,
-  imports: [MatCardModule, MatButtonModule, MatInputModule, MatFormFieldModule, MatChipsModule, MatIconModule, MatDividerModule],
+  imports: [MatCardModule, MatButtonModule, MatInputModule, MatFormFieldModule, MatChipsModule, MatIconModule, MatDividerModule, MatSlideToggleModule],
   templateUrl: './work-detail.component.html',
   styleUrl: './work-detail.component.scss'
 })
@@ -44,6 +45,10 @@ export class WorkDetailComponent {
       this.firestore.upload_work_changes(this.c_id, this.w_id);
       // SAVE CONFIRMATION POPUP
     }
+  }
+
+  edit() {
+    this.edit_mode = !this.edit_mode;
   }
 
   update_name(name: string) {
