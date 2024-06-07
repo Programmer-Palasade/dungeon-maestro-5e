@@ -1,14 +1,59 @@
 @if (!this.firestore.campaigns.has(this.c_id) || !this.firestore.works.get(this.c_id)?.has(this.w_id)) { {{this.router.navigate(['/home'])}} }
 
 @if (this.edit_mode) {
-    
+    <mat-card class="centered-card">
+
+        <mat-card-header class="center-content">
+            <mat-form-field appearance="outline" color="primary">
+                <mat-label>Work Name</mat-label>
+                <input #nameInput matInput value="{{this.work.name}}" (blur)="update_name(nameInput.value)">
+            </mat-form-field>
+        </mat-card-header>
+
+        <mat-divider></mat-divider>
+
+        <mat-card-content class="center-content">
+            <span class="center-content">Filterables</span>
+            <mat-chip-set class="center-content">
+                @for (filterable of this.work.filterables; track filterable) {
+                    <mat-chip>{{filterable}}</mat-chip>
+                }
+                <button mat-icon-button><mat-icon>add</mat-icon></button>
+            </mat-chip-set>
+
+            <mat-divider></mat-divider>
+
+            <span class="center-content">Beholders</span>
+            <mat-chip-set class="center-content">
+                @for (u_id of this.work.beholders; track u_id) {
+                    <mat-chip>{{this.firestore.get_username(u_id)}}</mat-chip>
+                }
+                <button mat-icon-button><mat-icon>add</mat-icon></button>
+            </mat-chip-set>
+
+            <mat-divider></mat-divider>
+
+            <mat-form-field appearance="outline" color="primary">
+                <mat-label>Work Name</mat-label>
+                <input #infoInput matInput value="{{this.work.info}}" (blur)="update_info(infoInput.value)">
+            </mat-form-field>
+        
+            <span class="center-content">
+                <button mat-fab (click)="this.firestore.upload_work_changes(this.c_id, this.w_id)"><mat-icon>save</mat-icon></button>
+            </span>
+        </mat-card-content>
+    </mat-card>
 }
+
 @else {
     <mat-card class="centered-card">
+
         <mat-card-header class="center-content">
             <mat-card-title>{{this.work.name}}</mat-card-title>
         </mat-card-header>
+
         <mat-divider></mat-divider>
+
         <mat-card-content class="center-content">
             <span class="center-content">Filterables</span>
             <mat-chip-set class="center-content">
@@ -16,14 +61,18 @@
                     <mat-chip>{{filterable}}</mat-chip>
                 }
             </mat-chip-set>
+
             <mat-divider></mat-divider>
+
             <span class="center-content">Beholders</span>
             <mat-chip-set class="center-content">
                 @for (u_id of this.work.beholders; track u_id) {
                     <mat-chip>{{this.firestore.get_username(u_id)}}</mat-chip>
                 }
             </mat-chip-set>
+
             <mat-divider></mat-divider>
+
             <p>{{this.work.info}}</p>
         </mat-card-content>
     </mat-card>
