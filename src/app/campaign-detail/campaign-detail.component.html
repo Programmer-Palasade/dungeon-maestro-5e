@@ -67,4 +67,6 @@
         </mat-card>
 }
 
-<div class="center-content"> <button mat-fab (click)="this.new_work()"> <mat-icon>add</mat-icon> </button> </div>
+@if (this.campaign.owner == this.firestore.user.uid) {
+    <div class="center-content"> <button mat-fab (click)="this.new_work()"> <mat-icon>add</mat-icon> </button> </div>
+}
