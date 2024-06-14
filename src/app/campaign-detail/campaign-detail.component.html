@@ -1,27 +1,49 @@
 @if (!this.firestore.campaigns.has(this.c_id)) { {{this.router.navigate(['/home'])}} }
 
-<mat-card class="centered-card">
-    <mat-card-header class="center-content">
-        <mat-card-title>
-            <mat-form-field appearance="outline" color="primary">
-                <mat-label>Campaign Name</mat-label>
-                <input #nameInput matInput value="{{this.campaign.name}}" (blur)="update_name(nameInput.value)">
-            </mat-form-field>
-        </mat-card-title>
-    </mat-card-header>
-    <mat-card-content class="center-content">
-        <span class="center-content">Owner: {{ this.firestore.get_username(this.campaign.owner) }}</span>
-        <span class="center-content">
-            @for (user of this.campaign.users; track user) {
-                <button mat-flat-button color="accent" disabled="{{!this.works.has(user)}}">{{this.firestore.get_username(user)}}</button>
-            }
-            <button mat-mini-fab><mat-icon>plus_one</mat-icon></button>
-        </span>
-        <span class="center-content">
-            <button mat-fab (click)="this.firestore.upload_campaign_changes(this.c_id)"><mat-icon>save</mat-icon></button>
-        </span>
-    </mat-card-content>
-</mat-card>
+@if (this.firestore.user.uid == this.campaign.owner) {
+    <span class="center-content"><mat-slide-toggle (change)="this.edit()">Edit Mode</mat-slide-toggle></span>
+}
+
+@if (this.edit_mode) {
+    <mat-card class="centered-card">
+        <mat-card-header class="center-content">
+            <mat-card-title>
+                <mat-form-field appearance="outline" color="primary">
+                    <mat-label>Campaign Name</mat-label>
+                    <input #nameInput matInput value="{{this.campaign.name}}" (blur)="update_name(nameInput.value)">
+                </mat-form-field>
+            </mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="center-content">
+            <span class="center-content">Owner: {{ this.firestore.get_username(this.campaign.owner) }}</span>
+            <span class="center-content">
+                @for (user of this.campaign.users; track user) {
+                    <button mat-flat-button color="accent" disabled="{{!this.works.has(user)}}">{{this.firestore.get_username(user)}}</button>
+                }
+                <button mat-mini-fab><mat-icon>add</mat-icon></button>
+            </span>
+            <span class="center-content">
+                <button mat-fab (click)="this.save()"><mat-icon>save</mat-icon></button>
+            </span>
+        </mat-card-content>
+    </mat-card>
+}
+
+@else {
+    <mat-card class="centered-card">
+        <mat-card-header class="center-content">
+            <mat-card-title>{{this.campaign.name}}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="center-content">
+            <span class="center-content">Owner: {{ this.firestore.get_username(this.campaign.owner) }}</span>
+            <span class="center-content">
+                @for (user of this.campaign.users; track user) {
+                    <button mat-flat-button color="accent" disabled="{{!this.works.has(user)}}">{{this.firestore.get_username(user)}}</button>
+                }
+            </span>
+        </mat-card-content>
+    </mat-card>
+}
 
 <div style="text-align: center;">
     <h3>Invite Adventurers</h3>
@@ -38,16 +60,26 @@
 
 <mat-divider></mat-divider>
 
+<p class="center-content">Works</p>
+
 @for (entry of this.works | keyvalue; track entry.key) {
         <mat-card class="centered-card">
-            <mat-card-header class="center-content">
-                <mat-card-title><button mat-button (click)="this.router.navigate(['campaigns/'.concat(this.c_id, '/', entry.key)])">{{entry.value.name}}</button></mat-card-title>
+            <mat-card-content class="center-content">
+                <mat-card-title class="center-content"><button mat-button (click)="this.router.navigate(['campaigns/'.concat(this.c_id, '/', entry.key)])">{{entry.value.name}}</button></mat-card-title>
                 <mat-card-subtitle>
                     @for (f of entry.value.filterables; track f) {
                         <mat-chip>{{f}}</mat-chip>
                     }
                 </mat-card-subtitle>
-            </mat-card-header>
-            <mat-card-footer></mat-card-footer>
+            </mat-card-content>
+            @if (this.edit_mode) {
+                <mat-card-actions align="end">
+                    <button mat-icon-button><mat-icon>delete</mat-icon></button>
+                </mat-card-actions>
+            }
         </mat-card>
+}
+
+@if (this.campaign.owner == this.firestore.user.uid) {
+    <div class="center-content"> <button mat-fab (click)="this.new_work()"> <mat-icon>add</mat-icon> </button> </div>
 }
