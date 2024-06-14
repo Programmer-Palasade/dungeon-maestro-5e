@@ -174,10 +174,6 @@ export class FirestoreService implements OnDestroy {
   }
 
   accept_campaign_request(user_id: string, campaign_request: CampaignRequest) {
-    const data = {
-      users: arrayUnion(user_id)
-    }
-    updateDoc(doc(this.firestore, 'campaigns/'.concat(campaign_request.cid!)), data);
     this.create_new_player_character(campaign_request.cid!, user_id);
 
     this.delete_campaign_request(user_id, campaign_request);
