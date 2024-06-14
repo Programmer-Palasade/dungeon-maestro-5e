@@ -31,12 +31,12 @@ export class FirestoreService implements OnDestroy {
       }
       else {
         const user_doc = doc(this.firestore, 'users/'.concat(u.uid));
-        getDoc( user_doc ).then( async snapshot => {
+        getDoc( user_doc ).then( snapshot => {
           this.user.uid = snapshot.id;
           if (!snapshot.exists()) {
             setDoc( user_doc, {name: u.displayName??"Unknown Adventurer", email: u.email??"", requests: []});
           }
-          await this.user_listener( user_doc );
+          this.user_listener( user_doc );
           this.listener();
         });
       }
