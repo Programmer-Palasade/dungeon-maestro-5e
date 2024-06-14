@@ -1,15 +1,14 @@
 import { Injectable, OnDestroy, inject } from '@angular/core';
-import { Firestore, collection, doc, query, or, where, onSnapshot, getDoc, setDoc, addDoc } from '@angular/fire/firestore';
+import { Firestore, collection, doc, query, or, where, onSnapshot, getDoc, setDoc, addDoc, getDocs, updateDoc, arrayUnion, arrayRemove } from '@angular/fire/firestore';
 import { Subscription } from 'rxjs';
 import { AuthService } from './auth.service';
-import { Campaign, User, Work } from './interfaces';
+import { Campaign, CampaignRequest, User, Work } from './interfaces';
 import { Unsubscribe } from '@angular/fire/auth';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FirestoreService implements OnDestroy {
-
   private firestore = inject(Firestore);
   private auth = inject(AuthService);
   private user_sub: Subscription;
@@ -18,7 +17,7 @@ export class FirestoreService implements OnDestroy {
   private q_campaign: Unsubscribe|undefined;
   private q_works: Map<string, Unsubscribe> = new Map();
 
-  public user: User = {uid:"", name:"", email:""};
+  public user: User = {uid:"", name:"", email:"", requests:[],};
   private associated_users: Map<string, User> = new Map();
   public campaigns: Map<string, Campaign> = new Map();
   public works: Map<string, Map<string, Work>> = new Map();
@@ -26,18 +25,18 @@ export class FirestoreService implements OnDestroy {
   constructor() {
     this.user_sub = this.auth.user.subscribe(u => {
       if (u == null) {
-        this.user = {uid:"", name:"", email:""};
+        this.user = {uid:"", name:"", email:"", requests:[]};
         this.unlisten_campaigns();
       }
       else {
         const user_doc = doc(this.firestore, 'users/'.concat(u.uid));
         getDoc( user_doc ).then( snapshot => {
           if (snapshot.exists()) {
-            this.user = {uid: u.uid, name: snapshot.get('name'), email: snapshot.get('email')};
+            this.user = {uid: u.uid, name: snapshot.get('name'), email: snapshot.get('email'), requests: snapshot.get('requests')};
           }
           else {
-            this.user = {uid:u.uid, name: u.displayName??"Unknown Adventurer", email: u.email??"" };
-            setDoc( user_doc, {name: this.user.name, email: this.user.email});
+            this.user = {uid:u.uid, name: u.displayName??"Unknown Adventurer", email: u.email??"", requests: []};
+            setDoc( user_doc, {name: this.user.name, email: this.user.email, requests: this.user.requests});
           }
           this.listener();
         });
@@ -144,4 +143,66 @@ export class FirestoreService implements OnDestroy {
     return this.associated_users.get(u_id)?.name ?? 'Unknown Adventurer';
   }
 
+  send_campaign_invite(u_id: string, c_id: string, c_name: string): void {
+    const new_request = {
+      cid: c_id,
+      cname: c_name
+    }
+    
+    const data = {
+      requests: arrayUnion(new_request)
+    }
+    updateDoc(doc(this.firestore, 'users/'.concat(u_id)), data);
+  }
+
+  async get_user_id(email:string): Promise<string> {
+    const q = query(collection(this.firestore, 'users'), where('email', '==', email));
+    const querySnapshot = await getDocs(q);
+
+    if (!querySnapshot.empty) {
+      const doc = querySnapshot.docs[0];
+      return doc.id;
+    } else {
+      return "";
+    }
+  }
+
+  accept_campaign_request(user_id: string, campaign_request: CampaignRequest) {
+    const data = {
+      users: arrayUnion(user_id)
+    }
+    updateDoc(doc(this.firestore, 'campaigns/'.concat(campaign_request.cid!)), data);
+    this.create_new_player_character(campaign_request.cid!, user_id);
+
+    this.delete_campaign_request(user_id, campaign_request);
+  }
+
+  delete_campaign_request(user_id: string, campaign_request: CampaignRequest) {
+    const data = {
+      requests: arrayRemove(campaign_request)
+    }
+    updateDoc(doc(this.firestore, 'users/'.concat(user_id)), data);
+  }
+
+  async create_new_player_character(campaignId: string, userId: string): Promise<void> {
+    try {
+      const data = {
+        notes: "These are your notes!"
+      }
+
+      const characterData = {
+        active: true,
+        info: 'Slightly better than an NPC',
+        name: 'New Character'
+      };
+
+      setDoc( doc(this.firestore, "campaigns/".concat(campaignId,'/users/'), userId), data);
+  
+      addDoc( collection(this.firestore, 'campaigns/'.concat(campaignId, '/users/', userId,'/characters')), characterData);
+  
+      console.log('User document and character document created successfully');
+    } catch (error) {
+      console.error('Error creating new player character: ', error);
+    }
+  }
 }

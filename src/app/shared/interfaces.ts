@@ -8,9 +8,14 @@ export interface Campaign {
 export interface User {
     uid: string | undefined,
     name: string,
-    email: string
+    email: string,
+    requests: CampaignRequest[]
 }
 
+export interface CampaignRequest {
+    cid: string | undefined,
+    cname: string
+}
 export interface Work {
     beholders: string[],
     filterables: string[],

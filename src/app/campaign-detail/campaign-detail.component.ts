@@ -11,11 +11,12 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { Campaign, Work } from '../shared/interfaces';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-campaign-detail',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatCardModule, MatInputModule, MatFormFieldModule, MatIconModule, MatChipsModule, MatDividerModule, MatSlideToggleModule],
+  imports: [MatButtonModule, CommonModule, FormsModule, MatButtonModule, MatCardModule, MatInputModule, MatFormFieldModule, MatIconModule, MatChipsModule, MatDividerModule],
   templateUrl: './campaign-detail.component.html',
   styleUrl: './campaign-detail.component.scss'
 })
@@ -26,6 +27,8 @@ export class CampaignDetailComponent {
   
   public edit_mode = false;
   public changes_made = false;
+
+  invitee : string = "";
 
   @Input({required: true}) c_id = '';
   
@@ -60,6 +63,16 @@ export class CampaignDetailComponent {
 
   edit() {
     this.edit_mode = !this.edit_mode;
+  }
+
+  invite_user(email: string) {
+    const uid = this.firestore.get_user_id(email).then(
+      value => this.firestore.send_campaign_invite(value, this.c_id, this.campaign.name)
+    );
+
+    this.invitee = "";
+
+    alert("A request to join your campaign has been sent to ".concat(email))
   }
 
 }
