@@ -16,7 +16,7 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-campaign-detail',
   standalone: true,
-  imports: [MatButtonModule, CommonModule, FormsModule, MatButtonModule, MatCardModule, MatInputModule, MatFormFieldModule, MatIconModule, MatChipsModule, MatDividerModule],
+  imports: [MatButtonModule, CommonModule, FormsModule, MatButtonModule, MatCardModule, MatInputModule, MatFormFieldModule, MatIconModule, MatChipsModule, MatDividerModule, MatSlideToggleModule],
   templateUrl: './campaign-detail.component.html',
   styleUrl: './campaign-detail.component.scss'
 })
