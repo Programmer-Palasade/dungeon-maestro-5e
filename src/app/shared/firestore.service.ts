@@ -32,7 +32,7 @@ export class FirestoreService implements OnDestroy {
         const user_doc = doc(this.firestore, 'users/'.concat(u.uid));
         getDoc( user_doc ).then( snapshot => {
           if (snapshot.exists()) {
-            this.user = {uid: u.uid, name: snapshot.get('name'), email: snapshot.get('email'), requests: snapshot.get('requests')};
+            this.user = {uid: u.uid, name: snapshot.get('name'), email: snapshot.get('email'), requests: snapshot.get('requests')??[]};
           }
           else {
             this.user = {uid:u.uid, name: u.displayName??"Unknown Adventurer", email: u.email??"", requests: []};
