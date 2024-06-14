@@ -72,6 +72,7 @@ export class FirestoreService implements OnDestroy {
     if (this.q_user) { this.q_user(); }
     this.q_user = onSnapshot(user_doc_ref, snapshot => {
       this.user = snapshot.data() as User;
+      this.user.uid = snapshot.id;
     })
   }
 
