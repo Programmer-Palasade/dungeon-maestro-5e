@@ -2,7 +2,7 @@ import { Injectable, OnDestroy, inject } from '@angular/core';
 import { Firestore, collection, doc, query, or, where, onSnapshot, getDoc, setDoc, addDoc, getDocs, updateDoc, arrayUnion, arrayRemove } from '@angular/fire/firestore';
 import { Subscription } from 'rxjs';
 import { AuthService } from './auth.service';
-import { Campaign, CampaignRequest, User, Work } from './interfaces';
+import { Campaign, CampaignRequest, Character, User, Work } from './interfaces';
 import { Unsubscribe } from '@angular/fire/auth';
 
 @Injectable({
@@ -190,10 +190,12 @@ export class FirestoreService implements OnDestroy {
         notes: "These are your notes!"
       }
 
-      const characterData = {
+      const characterData: Character = {
         active: true,
         info: 'Slightly better than an NPC',
-        name: 'New Character'
+        name: 'New Character',
+        identifiers: [],
+        filterables: [],
       };
 
       setDoc( doc(this.firestore, "campaigns/".concat(campaignId,'/users/'), userId), data);
