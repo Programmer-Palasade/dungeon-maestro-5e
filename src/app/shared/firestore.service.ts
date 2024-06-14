@@ -174,6 +174,7 @@ export class FirestoreService implements OnDestroy {
       users: arrayUnion(user_id)
     }
     updateDoc(doc(this.firestore, 'campaigns/'.concat(campaign_request.cid!)), data);
+    this.create_new_player_character(campaign_request.cid!, user_id);
 
     this.delete_campaign_request(user_id, campaign_request);
   }
@@ -183,5 +184,27 @@ export class FirestoreService implements OnDestroy {
       requests: arrayRemove(campaign_request)
     }
     updateDoc(doc(this.firestore, 'users/'.concat(user_id)), data);
+  }
+
+  async create_new_player_character(campaignId: string, userId: string): Promise<void> {
+    try {
+      const data = {
+        notes: "These are your notes!"
+      }
+
+      const characterData = {
+        active: true,
+        info: 'Slightly better than an NPC',
+        name: 'New Character'
+      };
+
+      setDoc( doc(this.firestore, "campaigns/".concat(campaignId,'/users/'), userId), data);
+  
+      addDoc( collection(this.firestore, 'campaigns/'.concat(campaignId, '/users/', userId,'/characters')), characterData);
+  
+      console.log('User document and character document created successfully');
+    } catch (error) {
+      console.error('Error creating new player character: ', error);
+    }
   }
 }
