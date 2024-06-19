@@ -1,4 +1,4 @@
-import { ApplicationConfig, importProvidersFrom } from '@angular/core';
+import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 
 import { routes } from './app.routes';
@@ -11,8 +11,9 @@ import { FirebaseConfig } from './secret';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideRouter(routes, withComponentInputBinding()), 
-    importProvidersFrom(provideFirebaseApp(() => initializeApp(FirebaseConfig))), 
-    importProvidersFrom(provideAuth(() => getAuth())), importProvidersFrom(provideFirestore(() => getFirestore())), provideAnimationsAsync()
+    provideRouter(routes, withComponentInputBinding()),
+    provideZoneChangeDetection({ eventCoalescing: true }),
+    provideFirebaseApp(() => initializeApp(FirebaseConfig)),
+    provideAuth(() => getAuth()), provideFirestore(() => getFirestore()), provideAnimationsAsync()
   ]
 };
