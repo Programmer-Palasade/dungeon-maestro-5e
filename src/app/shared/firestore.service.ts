@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy, inject } from '@angular/core';
 import { Firestore, collection, doc, query, or, where, onSnapshot, getDoc, setDoc, addDoc, getDocs, updateDoc, arrayUnion, arrayRemove } from '@angular/fire/firestore';
-import { Subscription } from 'rxjs';
+import { Subscription, filter } from 'rxjs';
 import { AuthService } from './auth.service';
 import { Campaign, CampaignRequest, User, Work } from './interfaces';
 import { Unsubscribe } from '@angular/fire/auth';
@@ -194,6 +194,20 @@ export class FirestoreService implements OnDestroy {
     } else {
       return "";
     }
+  }
+
+  get_filtered_works(c_id: string, filters: string[]): Map<string, Work> {
+    if (filters.length == 0) {return this.works.get(c_id)??new Map();}
+    var filtered: Map<string, Work> = new Map();
+    for (let filter of filters) {
+      for (let key in (this.works.get(c_id))) {
+        var w = this.works.get(c_id)?.get(key);
+        if (w && w.filterables.find( f => { return f == filter; } ) && !filtered.has(key) ) {
+          filtered.set(key, w);
+        }
+      }
+    }
+    return filtered;
   }
 
   accept_campaign_request(user_id: string, campaign_request: CampaignRequest) {
