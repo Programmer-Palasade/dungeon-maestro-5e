@@ -12,9 +12,8 @@
 // Define the theme object.
 $dungeon-maestro-app-theme: mat.define-theme((
   color: (
-    theme-type: light,
-    primary: mat.$azure-palette,
-    tertiary: mat.$blue-palette,
+    theme-type: dark,
+    primary: mat.$orange-palette,
   ),
   density: (
     scale: 0,
@@ -37,4 +36,22 @@ $dungeon-maestro-app-theme: mat.define-theme((
 /* You can add global styles to this file, and also import other style files */
 
 html, body { height: 100%; }
+html {@extend .mat-app-background;}
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.center-content {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  margin: 2px;
+}
+
+.centered-card {
+  display: flex;
+  justify-self: center;
+  justify-content: center;
+  align-self: center;
+  align-content: center;
+  max-width: 350px;
+  margin: 8px auto;
+}
