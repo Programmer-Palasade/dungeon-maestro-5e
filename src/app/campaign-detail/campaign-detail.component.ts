@@ -31,6 +31,7 @@ export class CampaignDetailComponent {
   invitee : string = "";
 
   @Input({required: true}) c_id = '';
+  public selected_filters: string[] = [];
   
   constructor() {
   }
@@ -40,7 +41,7 @@ export class CampaignDetailComponent {
   }
 
   get works(): Map<string, Work> {
-    return this.firestore.works.get(this.c_id) ?? new Map();
+    return this.firestore.get_filtered_works(this.c_id, this.selected_filters);
   }
 
   save() {
