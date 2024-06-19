@@ -3,6 +3,7 @@
 // For more information: https://material.angular.io/guide/theming
 @use '@angular/material' as mat;
 // Plus imports for other components in your app.
+@use 'app/themes/dark-orange.scss' as dark-orange;
 
 // Include the common styles for Angular Material. We include this here so that you only
 // have to load a single css file for Angular Material in your app.
@@ -10,21 +11,22 @@
 @include mat.core();
 
 // Define the theme object.
-$dungeon-maestro-app-theme: mat.define-theme((
+/*$dungeon-maestro-app-theme: mat.define-theme((
   color: (
     theme-type: dark,
-    primary: mat.$orange-palette,
+    primary: mat.$orange-palette
   ),
   density: (
     scale: 0,
   )
 ));
+*/
 
 // Include theme styles for core and each component used in your app.
 // Alternatively, you can import and @include the theme mixins for each component
 // that you are using.
 :root {
-  @include mat.all-component-themes($dungeon-maestro-app-theme);
+  @include mat.all-component-themes(dark-orange.$dark-theme);
 }
 
 // Comment out the line below if you want to use the pre-defined typography utility classes.
@@ -36,8 +38,7 @@ $dungeon-maestro-app-theme: mat.define-theme((
 /* You can add global styles to this file, and also import other style files */
 
 html, body { height: 100%; }
-html {@extend .mat-app-background;}
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body { @extend .mat-app-background; margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 .center-content {
   display: flex;
