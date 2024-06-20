@@ -122,9 +122,7 @@ export class FirestoreService implements OnDestroy {
           }
         }
         for (let identity of this.works.get(c_id)?.get(change.doc.id)?.identifiers??[]) {
-          if (this.identifiers.has(identity)) {
-            this.identifiers.delete(identity);
-          }
+          if (this.identifiers.has(identity)) { this.identifiers.delete(identity); }
         }
       }
 
@@ -140,13 +138,16 @@ export class FirestoreService implements OnDestroy {
           else {this.filters.set(filter, [change.doc.id]);}
         }
         for (let identity of new_work.identifiers) {
-          this.identifiers.set(identity, change.doc.id);
+          console.log('adding', identity, 'to identifiers')
+          this.identifiers.set(identity, 'campaigns/'.concat(c_id, '/', change.doc.id));
         }
       }
 
       this.filters.forEach( (works, filter) => {
         if (works.length == 0) {this.filters.delete(filter);}
       });
+
+      console.log(this.identifiers);
 
     }) });
 
@@ -200,14 +201,29 @@ export class FirestoreService implements OnDestroy {
     if (filters.length == 0) {return this.works.get(c_id)??new Map();}
     var filtered: Map<string, Work> = new Map();
     for (let filter of filters) {
-      for (let key in (this.works.get(c_id))) {
-        var w = this.works.get(c_id)?.get(key);
+      for (let entry of (this.works.get(c_id))??[]) {
+        var key = entry[0]
+        var w = entry[1];
         if (w && w.filterables.find( f => { return f == filter; } ) && !filtered.has(key) ) {
           filtered.set(key, w);
         }
       }
     }
     return filtered;
+  }
+
+  public generate_links(str: string): string {
+    var res_str = str;
+    console.log(this.identifiers);
+    for (var entry of this.identifiers) {
+      var id = entry[0];
+      var link = entry[1];
+      let insert = '<a routerLink="'.concat(link,'">', id, '</a>');
+      console.log(insert);
+      res_str = res_str.replaceAll(id, insert);
+    }
+    console.log(str, '\n'.concat(res_str));
+    return res_str;
   }
 
   accept_campaign_request(user_id: string, campaign_request: CampaignRequest) {
