@@ -22,8 +22,8 @@ export class FirestoreService implements OnDestroy {
   public campaigns: Map<string, Campaign> = new Map();
   public works: Map<string, Map<string, Work>> = new Map();
 
-  public filters: Map<string, string[]> = new Map();
-  public identifiers: Map<string, string> = new Map();
+  public filters: Map<string, Map<string, string[]>> = new Map();
+  public identifiers: Map<string, Map<string, string>> = new Map();
 
   constructor() {
     this.user_sub = this.auth.user.subscribe(u => {
@@ -80,11 +80,15 @@ export class FirestoreService implements OnDestroy {
 
         if (change.type == 'removed') {
           this.campaigns.delete(change.doc.id);
+          this.identifiers.delete(change.doc.id);
+          this.filters.delete(change.doc.id);
           this.unlisten_works(change.doc.id);
         }
         else {
           var new_campaign = change.doc.data() as Campaign;
           this.campaigns.set(change.doc.id, new_campaign);
+          this.identifiers.set(change.doc.id, new Map());
+          this.filters.set(change.doc.id, new Map());
 
           for (let u_id of new_campaign.users.concat(new_campaign.owner)) {
             const user_snap = await getDoc( doc(this.firestore, 'users/'.concat(u_id)) );
@@ -115,14 +119,14 @@ export class FirestoreService implements OnDestroy {
 
       if (change.type != 'added') {
         for (let filter of this.works.get(c_id)?.get(change.doc.id)?.filterables??[]) {
-          if (this.filters.has(filter)) {
-            if (this.filters.get(filter)?.find(str => {return (str == change.doc.id)})) {
-              this.filters.get(filter)?.splice( this.filters.get(filter)?.findIndex(str => {return (str == change.doc.id)})??-1, 1);
+          if (this.filters.get(c_id)?.has(filter)) {
+            if (this.filters.get(c_id)?.get(filter)?.find(str => {return (str == change.doc.id)})) {
+              this.filters.get(c_id)?.get(filter)?.splice( this.filters.get(c_id)?.get(filter)?.findIndex(str => {return (str == change.doc.id)})??-1, 1);
             }
           }
         }
         for (let identity of this.works.get(c_id)?.get(change.doc.id)?.identifiers??[]) {
-          if (this.identifiers.has(identity)) { this.identifiers.delete(identity); }
+          if (this.identifiers.get(c_id)?.has(identity)) { this.identifiers.get(c_id)?.delete(identity); }
         }
       }
 
@@ -134,20 +138,17 @@ export class FirestoreService implements OnDestroy {
         var new_work = change.doc.data() as Work;
         this.works.get(c_id)?.set(change.doc.id, new_work);
         for (let filter of new_work.filterables) {
-          if (this.filters.has(filter)) {this.filters.get(filter)?.push(change.doc.id);}
-          else {this.filters.set(filter, [change.doc.id]);}
+          if (this.filters.get(c_id)?.has(filter)) {this.filters.get(c_id)?.get(filter)?.push(change.doc.id);}
+          else {this.filters.get(c_id)?.set(filter, [change.doc.id]);}
         }
         for (let identity of new_work.identifiers) {
-          console.log('adding', identity, 'to identifiers')
-          this.identifiers.set(identity, 'campaigns/'.concat(c_id, '/', change.doc.id));
+          this.identifiers.get(c_id)?.set(identity, '/campaigns/'.concat(c_id, '/', change.doc.id));
         }
       }
 
-      this.filters.forEach( (works, filter) => {
-        if (works.length == 0) {this.filters.delete(filter);}
+      this.filters.get(c_id)?.forEach( (works, filter) => {
+        if (works.length == 0) {this.filters.get(c_id)?.delete(filter);}
       });
-
-      console.log(this.identifiers);
 
     }) });
 
@@ -212,17 +213,15 @@ export class FirestoreService implements OnDestroy {
     return filtered;
   }
 
-  public generate_links(str: string): string {
+  public generate_links(c_id: string, str: string): string {
     var res_str = str;
-    console.log(this.identifiers);
-    for (var entry of this.identifiers) {
+    for (var entry of this.identifiers.get(c_id)??[]) {
       var id = entry[0];
       var link = entry[1];
-      let insert = '<a routerLink="'.concat(link,'">', id, '</a>');
-      console.log(insert);
+      let insert = '<a routerLink="' + link + '">' +  id +  '</a>';
       res_str = res_str.replaceAll(id, insert);
     }
-    console.log(str, '\n'.concat(res_str));
+    console.log(str, '\n' + res_str);
     return res_str;
   }
 

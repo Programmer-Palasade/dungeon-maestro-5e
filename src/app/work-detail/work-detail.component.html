@@ -77,7 +77,7 @@
 
             <mat-divider></mat-divider>
 
-            <p class="center-content">{{ this.firestore.generate_links(this.work.info) }}</p>
+            <p [innerHtml]="this.scrubbed_info"></p>
         </mat-card-content>
     </mat-card>
 }

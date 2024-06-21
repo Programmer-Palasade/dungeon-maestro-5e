@@ -1,5 +1,5 @@
 import { Component, Input, inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { FirestoreService } from '../shared/firestore.service';
 import { Campaign, Work } from '../shared/interfaces';
 import { ENTER, COMMA } from '@angular/cdk/keycodes';
@@ -11,15 +11,18 @@ import { MatChipEditedEvent, MatChipInputEvent, MatChipsModule } from '@angular/
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-work-detail',
   standalone: true,
-  imports: [MatCardModule, MatButtonModule, MatInputModule, MatFormFieldModule, MatChipsModule, MatIconModule, MatDividerModule, MatSlideToggleModule],
+  imports: [RouterLink, RouterLinkActive, MatCardModule, MatButtonModule, MatInputModule, MatFormFieldModule, MatChipsModule, MatIconModule, MatDividerModule, MatSlideToggleModule],
   templateUrl: './work-detail.component.html',
   styleUrl: './work-detail.component.scss'
 })
 export class WorkDetailComponent {
+
+  private sanitizer = inject(DomSanitizer);
 
   public router = inject(Router);
   public firestore = inject(FirestoreService);
@@ -30,6 +33,10 @@ export class WorkDetailComponent {
 
   @Input({required: true}) c_id = '';
   @Input({required: true}) w_id = '';
+
+  get scrubbed_info(): SafeHtml {
+    return this.sanitizer.bypassSecurityTrustHtml(this.firestore.generate_links(this.c_id, this.work.info));
+  }
 
   get campaign(): Campaign {
     return this.firestore.campaigns.get(this.c_id) ?? {name: 'Undefined', owner: 'Unknown', users: []};
@@ -102,8 +109,6 @@ export class WorkDetailComponent {
       this.work.beholders.splice( this.work.beholders.findIndex( i => {return i == u_id} ), 1);
     }
   }
-
-  // Not going to be relevant yet
 
   add_identifier(ident: string) {
     if (ident) {
