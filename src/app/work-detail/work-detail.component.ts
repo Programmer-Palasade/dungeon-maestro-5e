@@ -1,5 +1,5 @@
 import { Component, Input, inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { FirestoreService } from '../shared/firestore.service';
 import { Campaign, Work } from '../shared/interfaces';
 import { ENTER, COMMA } from '@angular/cdk/keycodes';
@@ -11,11 +11,12 @@ import { MatChipEditedEvent, MatChipInputEvent, MatChipsModule } from '@angular/
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { LinkingService } from '../shared/linking.service';
 
 @Component({
   selector: 'app-work-detail',
   standalone: true,
-  imports: [MatCardModule, MatButtonModule, MatInputModule, MatFormFieldModule, MatChipsModule, MatIconModule, MatDividerModule, MatSlideToggleModule],
+  imports: [RouterLink, RouterLinkActive, MatCardModule, MatButtonModule, MatInputModule, MatFormFieldModule, MatChipsModule, MatIconModule, MatDividerModule, MatSlideToggleModule],
   templateUrl: './work-detail.component.html',
   styleUrl: './work-detail.component.scss'
 })
@@ -23,6 +24,7 @@ export class WorkDetailComponent {
 
   public router = inject(Router);
   public firestore = inject(FirestoreService);
+  public linker = inject(LinkingService);
   public seperatorKeyCodes = [ENTER, COMMA];
 
   public edit_mode = false;
@@ -102,8 +104,6 @@ export class WorkDetailComponent {
       this.work.beholders.splice( this.work.beholders.findIndex( i => {return i == u_id} ), 1);
     }
   }
-
-  // Not going to be relevant yet
 
   add_identifier(ident: string) {
     if (ident) {
