@@ -142,9 +142,6 @@ $light-theme: mat.define-theme((
     tertiary: $_tertiary,
     use-system-variables: true,
   ),
-  typography: (
-    use-system-variables: true,
-  ),
 ));
 $dark-theme: mat.define-theme((
   color: (
