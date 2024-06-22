@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { FirestoreService } from './firestore.service';
+import { LinkedStringSegment } from './interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -56,14 +57,8 @@ export class LinkingService {
       });
       output = new_output;
     }
-    
+
     return output;
   }
 
-}
-
-interface LinkedStringSegment {
-  ind: number,
-  str: string,
-  link: string|undefined
 }
