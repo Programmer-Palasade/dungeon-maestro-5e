@@ -213,17 +213,6 @@ export class FirestoreService implements OnDestroy {
     return filtered;
   }
 
-  public generate_links(c_id: string, str: string): string {
-    var res_str = str;
-    for (var entry of this.identifiers.get(c_id)??[]) {
-      var id = entry[0];
-      var link = entry[1];
-      let insert = '<a routerLink="' + link + '">' +  id +  '</a>';
-      res_str = res_str.replaceAll(id, insert);
-    }
-    console.log(str, '\n' + res_str);
-    return res_str;
-  }
 
   accept_campaign_request(user_id: string, campaign_request: CampaignRequest) {
     const data = {

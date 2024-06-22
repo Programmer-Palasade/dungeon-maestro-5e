@@ -11,7 +11,7 @@ import { MatChipEditedEvent, MatChipInputEvent, MatChipsModule } from '@angular/
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { LinkingService } from '../shared/linking.service';
 
 @Component({
   selector: 'app-work-detail',
@@ -22,10 +22,9 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 })
 export class WorkDetailComponent {
 
-  private sanitizer = inject(DomSanitizer);
-
   public router = inject(Router);
   public firestore = inject(FirestoreService);
+  public linker = inject(LinkingService);
   public seperatorKeyCodes = [ENTER, COMMA];
 
   public edit_mode = false;
@@ -33,10 +32,6 @@ export class WorkDetailComponent {
 
   @Input({required: true}) c_id = '';
   @Input({required: true}) w_id = '';
-
-  get scrubbed_info(): SafeHtml {
-    return this.sanitizer.bypassSecurityTrustHtml(this.firestore.generate_links(this.c_id, this.work.info));
-  }
 
   get campaign(): Campaign {
     return this.firestore.campaigns.get(this.c_id) ?? {name: 'Undefined', owner: 'Unknown', users: []};

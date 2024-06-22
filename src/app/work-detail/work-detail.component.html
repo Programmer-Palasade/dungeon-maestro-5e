@@ -76,8 +76,18 @@
             </mat-chip-set>
 
             <mat-divider></mat-divider>
-
-            <p [innerHtml]="this.scrubbed_info"></p>
+            <div class="center-content">
+                <p>
+                    @for (seg of this.linker.generate_links(this.c_id, this.work.info); track seg.ind) {
+                        @if (seg.link) {
+                            <a [routerLink]="seg.link">{{seg.str}}</a>
+                        }
+                        @else {
+                            {{seg.str}}
+                        }
+                    }
+                </p>
+            </div>
         </mat-card-content>
     </mat-card>
 }
