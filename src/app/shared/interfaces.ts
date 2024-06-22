@@ -1,4 +1,10 @@
 
+export interface LinkedStringSegment {
+    ind: number,
+    str: string,
+    link: string|undefined
+  }
+
 export interface Campaign {
     name: string,
     owner: string,

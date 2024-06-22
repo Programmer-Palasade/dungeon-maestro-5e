@@ -38,7 +38,7 @@
             <mat-divider></mat-divider>
 
             <mat-form-field appearance="outline" color="primary">
-                <mat-label>Work Name</mat-label>
+                <mat-label>Work Info</mat-label>
                 <input #infoInput matInput value="{{this.work.info}}" (blur)="update_info(infoInput.value)">
             </mat-form-field>
         
@@ -76,8 +76,18 @@
             </mat-chip-set>
 
             <mat-divider></mat-divider>
-
-            <p class="center-content">{{this.work.info}}</p>
+            <div class="center-content">
+                <p>
+                    @for (seg of this.linker.generate_links(this.c_id, this.work.info); track seg.ind) {
+                        @if (seg.link) {
+                            <a [routerLink]="seg.link">{{seg.str}}</a>
+                        }
+                        @else {
+                            {{seg.str}}
+                        }
+                    }
+                </p>
+            </div>
         </mat-card-content>
     </mat-card>
 }

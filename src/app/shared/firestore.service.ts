@@ -23,6 +23,9 @@ export class FirestoreService implements OnDestroy {
   public campaigns: Map<string, Campaign> = new Map();
   public works: Map<string, Map<string, Work>> = new Map();
 
+  public filters: Map<string, Map<string, string[]>> = new Map();
+  public identifiers: Map<string, Map<string, string>> = new Map();
+
   constructor() {
     this.user_sub = this.auth.user.subscribe(u => {
       if (u == null) {
@@ -84,11 +87,15 @@ export class FirestoreService implements OnDestroy {
 
         if (change.type == 'removed') {
           this.campaigns.delete(change.doc.id);
+          this.identifiers.delete(change.doc.id);
+          this.filters.delete(change.doc.id);
           this.unlisten_works(change.doc.id);
         }
         else {
           var new_campaign = change.doc.data() as Campaign;
           this.campaigns.set(change.doc.id, new_campaign);
+          this.identifiers.set(change.doc.id, new Map());
+          this.filters.set(change.doc.id, new Map());
 
           for (let u_id of new_campaign.users.concat(new_campaign.owner)) {
             const user_snap = await getDoc( doc(this.firestore, 'users/'.concat(u_id)) );
@@ -117,6 +124,19 @@ export class FirestoreService implements OnDestroy {
     }
     return onSnapshot(q, snapshot => { snapshot.docChanges().forEach( change => {
 
+      if (change.type != 'added') {
+        for (let filter of this.works.get(c_id)?.get(change.doc.id)?.filterables??[]) {
+          if (this.filters.get(c_id)?.has(filter)) {
+            if (this.filters.get(c_id)?.get(filter)?.find(str => {return (str == change.doc.id)})) {
+              this.filters.get(c_id)?.get(filter)?.splice( this.filters.get(c_id)?.get(filter)?.findIndex(str => {return (str == change.doc.id)})??-1, 1);
+            }
+          }
+        }
+        for (let identity of this.works.get(c_id)?.get(change.doc.id)?.identifiers??[]) {
+          if (this.identifiers.get(c_id)?.has(identity)) { this.identifiers.get(c_id)?.delete(identity); }
+        }
+      }
+
       if (change.type == 'removed') {
         this.works.get(c_id)?.delete(change.doc.id);
       }
@@ -124,7 +144,18 @@ export class FirestoreService implements OnDestroy {
       else {
         var new_work = change.doc.data() as Work;
         this.works.get(c_id)?.set(change.doc.id, new_work);
+        for (let filter of new_work.filterables) {
+          if (this.filters.get(c_id)?.has(filter)) {this.filters.get(c_id)?.get(filter)?.push(change.doc.id);}
+          else {this.filters.get(c_id)?.set(filter, [change.doc.id]);}
+        }
+        for (let identity of new_work.identifiers) {
+          this.identifiers.get(c_id)?.set(identity, '/campaigns/'.concat(c_id, '/', change.doc.id));
+        }
       }
+
+      this.filters.get(c_id)?.forEach( (works, filter) => {
+        if (works.length == 0) {this.filters.get(c_id)?.delete(filter);}
+      });
 
     }) });
 
@@ -173,6 +204,22 @@ export class FirestoreService implements OnDestroy {
       return "";
     }
   }
+
+  get_filtered_works(c_id: string, filters: string[]): Map<string, Work> {
+    if (filters.length == 0) {return this.works.get(c_id)??new Map();}
+    var filtered: Map<string, Work> = new Map();
+    for (let filter of filters) {
+      for (let entry of (this.works.get(c_id))??[]) {
+        var key = entry[0]
+        var w = entry[1];
+        if (w && w.filterables.find( f => { return f == filter; } ) && !filtered.has(key) ) {
+          filtered.set(key, w);
+        }
+      }
+    }
+    return filtered;
+  }
+
 
   accept_campaign_request(user_id: string, campaign_request: CampaignRequest) {
     this.create_new_player_character(campaign_request.cid!, user_id);
