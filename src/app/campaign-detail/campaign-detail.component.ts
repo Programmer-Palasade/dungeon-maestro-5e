@@ -10,7 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { Campaign, Work } from '../shared/interfaces';
+import { Campaign, Work } from '../shared/structure';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -37,10 +37,11 @@ export class CampaignDetailComponent {
   }
 
   get campaign(): Campaign {
-    return this.firestore.campaigns.get(this.c_id) ?? {name: 'Undefined', owner: 'Unknown', users: []};
+    return this.firestore.campaigns.get(this.c_id) ?? new Campaign('');
   }
 
   get works(): Map<string, Work> {
+    console.log(this.campaign.works);
     return this.firestore.get_filtered_works(this.c_id, this.selected_filters);
   }
 

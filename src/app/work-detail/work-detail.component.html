@@ -1,4 +1,4 @@
-@if (!this.firestore.campaigns.has(this.c_id) || !this.firestore.works.get(this.c_id)?.has(this.w_id)) { {{this.router.navigate(['/home'])}} }
+@if (!this.firestore.campaigns.has(this.c_id) || !this.firestore.campaigns.get(this.c_id)?.works?.has(this.w_id)) { {{this.router.navigate(['/home'])}} }
 
 @if (this.firestore.user.uid == this.campaign.owner) {
     <span class="center-content"><mat-slide-toggle (change)="this.edit()">Edit Mode</mat-slide-toggle></span>

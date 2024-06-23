@@ -4,7 +4,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { FirestoreService } from '../shared/firestore.service';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
-import { CampaignRequest } from '../shared/interfaces';
+import { CampaignRequest } from '../shared/structure';
 import { Router } from '@angular/router';
 
 @Component({

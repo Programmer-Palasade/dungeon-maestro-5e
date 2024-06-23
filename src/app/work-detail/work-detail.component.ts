@@ -1,7 +1,7 @@
 import { Component, Input, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { FirestoreService } from '../shared/firestore.service';
-import { Campaign, Work } from '../shared/interfaces';
+import { Campaign, Work } from '../shared/structure';
 import { ENTER, COMMA } from '@angular/cdk/keycodes';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -34,11 +34,11 @@ export class WorkDetailComponent {
   @Input({required: true}) w_id = '';
 
   get campaign(): Campaign {
-    return this.firestore.campaigns.get(this.c_id) ?? {name: 'Undefined', owner: 'Unknown', users: []};
+    return this.firestore.campaigns.get(this.c_id) ?? new Campaign('');
   }
 
   get work(): Work {
-    return this.firestore.works.get(this.c_id)?.get(this.w_id) ?? {beholders: [], filterables: [], identifiers: [], info: '', name: '', supervisible: false}
+    return this.firestore.campaigns.get(this.c_id)?.works?.get(this.w_id) ?? {beholders: [], filterables: [], identifiers: [], info: '', name: '', supervisible: false}
   }
 
   async save() {

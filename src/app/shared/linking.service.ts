@@ -1,6 +1,5 @@
 import { Injectable, inject } from '@angular/core';
 import { FirestoreService } from './firestore.service';
-import { LinkedStringSegment } from './interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -48,7 +47,7 @@ export class LinkingService {
   public generate_links(c_id: string, str: string): LinkedStringSegment[] {
     var output: LinkedStringSegment[] = [ {ind: 0, str: str, link: undefined} ];
 
-    for ( let entry of this.firestore.identifiers.get(c_id)??[] ) {
+    for ( let entry of this.firestore.campaigns.get(c_id)?.identifiers??[] ) {
       let new_output: LinkedStringSegment[] = [];
       let id = entry[0];
       let link = entry[1];
@@ -61,4 +60,10 @@ export class LinkingService {
     return output;
   }
 
+}
+
+export interface LinkedStringSegment {
+  ind: number,
+  str: string,
+  link: string|undefined
 }
