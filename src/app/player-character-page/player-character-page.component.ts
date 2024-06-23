@@ -14,13 +14,13 @@ import { Campaign, Character, Work } from '../shared/interfaces';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-campaign-detail',
+  selector: 'app-player-character-page',
   standalone: true,
   imports: [MatButtonModule, CommonModule, FormsModule, MatButtonModule, MatCardModule, MatInputModule, MatFormFieldModule, MatIconModule, MatChipsModule, MatDividerModule, MatSlideToggleModule],
-  templateUrl: './campaign-detail.component.html',
-  styleUrl: './campaign-detail.component.scss'
+  templateUrl: './player-character-page.component.html',
+  styleUrl: './player-character-page.component.scss'
 })
-export class CampaignDetailComponent {
+export class PlayerCharacterPageComponent {
   
   public router = inject(Router);
   public firestore = inject(FirestoreService);
@@ -31,17 +31,17 @@ export class CampaignDetailComponent {
   invitee : string = "";
 
   @Input({required: true}) c_id = '';
+  @Input({required: true}) pc_id = '';
+  
   
   constructor() {
   }
 
-  get campaign(): Campaign {
-    return this.firestore.campaigns.get(this.c_id) ?? {name: 'Undefined', owner: 'Unknown', users: []};
+  get character(): Character {
+    return this.firestore.characters.get(this.c_id)?.get(this.pc_id) ?? {active: true, info: '', name: '', identifiers: [], filterables: []};
   }
 
-  get works(): Map<string, Work> {
-    return this.firestore.works.get(this.c_id) ?? new Map();
-  }
+ 
 
   get characters(): Map<string, Character> {
     return this.firestore.characters.get(this.c_id) ?? new Map();
@@ -50,34 +50,24 @@ export class CampaignDetailComponent {
 
   save() {
     if (this.changes_made) {
-      this.firestore.upload_campaign_changes(this.c_id);
+      this.firestore.upload_character_changes(this.c_id, this.pc_id);
       this.changes_made = false;
     }
   }
 
-  async new_work() {
-    var new_w: Work = {beholders: [], filterables: [], identifiers: [], info: "An extraordinarily ordinary and descriptive describation.", name: "Titilating Titular Topic Title", supervisible: false};
-    const new_wid = await this.firestore.upload_new_work(this.c_id, new_w);
-    // this.router.navigate(['/campaigns/'.concat(this.c_id, '/', new_wid)]);
-  }
 
   update_name(name: string) {
-    this.campaign.name = name;
+    this.character.name = name;
     this.changes_made = true;
+  }
+
+  update_info(info: string) {
+    this.changes_made = true;
+    this.character.info = info;
   }
 
   edit() {
     this.edit_mode = !this.edit_mode;
-  }
-
-  invite_user(email: string) {
-    const uid = this.firestore.get_user_id(email).then(
-      value => this.firestore.send_campaign_invite(value, this.c_id, this.campaign.name)
-    );
-
-    this.invitee = "";
-
-    alert("A request to join your campaign has been sent to ".concat(email))
   }
 
 }

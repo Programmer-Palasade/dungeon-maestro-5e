@@ -1,0 +1,40 @@
+@if (this.firestore.user.uid == this.u_id) {
+    <span class="center-content"><mat-slide-toggle (change)="this.edit()">Edit Mode</mat-slide-toggle></span>
+}
+
+@if (this.edit_mode) {
+    <mat-card class="centered-card">
+
+        <mat-card-header class="center-content">
+            <mat-form-field appearance="outline" color="primary">
+                <mat-label>Name</mat-label>
+                <input #nameInput matInput value="{{this.user.name}}" (blur)="update_name(nameInput.value)">
+            </mat-form-field>
+        </mat-card-header>
+
+        <mat-divider></mat-divider>
+
+        <mat-card-content class="center-content">
+        
+            <span class="center-content">
+                <button mat-fab (click)="this.save()"><mat-icon>save</mat-icon></button>
+            </span>
+
+        </mat-card-content>
+    </mat-card>
+}
+
+@else {
+    <mat-card class="centered-card">
+
+        <mat-card-header class="center-content">
+            <mat-card-title>{{this.user.name}}</mat-card-title>
+        </mat-card-header>
+
+        <mat-divider></mat-divider>
+
+        <mat-card-content class="center-content">
+            More information coming
+        </mat-card-content>
+    </mat-card>
+}

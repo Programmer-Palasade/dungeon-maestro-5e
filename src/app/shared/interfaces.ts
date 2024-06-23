@@ -24,3 +24,11 @@ export interface Work {
     name: string,
     supervisible: boolean
 }
+
+export interface Character {
+    active: boolean,
+    info: string,
+    name: string,
+    identifiers: string[],
+    filterables: string[],
+}

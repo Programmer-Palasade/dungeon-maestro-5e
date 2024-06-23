@@ -5,12 +5,16 @@ import { ListViewerComponent } from './list-viewer/list-viewer.component';
 import { WorkDetailComponent } from './work-detail/work-detail.component';
 import { CampaignDetailComponent } from './campaign-detail/campaign-detail.component';
 import { UserNotificationsComponent } from './user-notifications/user-notifications.component';
+import { PlayerCharacterPageComponent } from './player-character-page/player-character-page.component';
+import { ProfilePageComponent } from './profile-page/profile-page.component';
 
 export const routes: Routes = [
     {path: 'login', component: LoginComponent },
     {path: 'home', component: LandingPageComponent},
+    {path: 'user/:u_id', component: ProfilePageComponent},
     {path: 'campaigns/:c_id/:w_id', component: WorkDetailComponent},
     {path: 'campaigns/:c_id', component: CampaignDetailComponent},
+    {path: 'campaigns/:c_id/pc/:pc_id', component: PlayerCharacterPageComponent},
     {path: 'campaigns', component: ListViewerComponent},
     {path: 'notifications', component: UserNotificationsComponent},
 

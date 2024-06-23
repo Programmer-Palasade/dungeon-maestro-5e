@@ -1,0 +1,48 @@
+@if (!this.firestore.campaigns.has(this.c_id) || !this.firestore.characters.get(this.c_id)?.has(this.pc_id)) { {{this.router.navigate(['/home'])}} }
+
+@if (true) {
+    <span class="center-content"><mat-slide-toggle (change)="this.edit()">Edit Mode</mat-slide-toggle></span>
+}
+
+@if (this.edit_mode) {
+    <mat-card class="centered-card">
+
+        <mat-card-header class="center-content">
+            <mat-form-field appearance="outline" color="primary">
+                <mat-label>Character Name</mat-label>
+                <input #nameInput matInput value="{{this.character.name}}" (blur)="update_name(nameInput.value)">
+            </mat-form-field>
+        </mat-card-header>
+
+        <mat-divider></mat-divider>
+
+        <mat-card-content class="center-content">
+            <mat-form-field appearance="outline" color="primary">
+                <mat-label>Character Info</mat-label>
+                <input #infoInput matInput value="{{this.character.info}}" (blur)="update_info(infoInput.value)">
+            </mat-form-field>
+        
+            <span class="center-content">
+                <button mat-fab (click)="this.save()"><mat-icon>save</mat-icon></button>
+            </span>
+        </mat-card-content>
+    </mat-card>
+}
+
+@else {
+    <mat-card class="centered-card">
+
+        <mat-card-header class="center-content">
+            <mat-card-title>{{this.character.name}}</mat-card-title>
+        </mat-card-header>
+
+        <mat-divider></mat-divider>
+
+        <mat-card-content class="center-content">
+
+            <mat-divider></mat-divider>
+
+            <p class="center-content">{{this.character.info}}</p>
+        </mat-card-content>
+    </mat-card>
+}

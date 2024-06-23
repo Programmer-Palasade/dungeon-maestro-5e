@@ -1,8 +1,8 @@
 import { Injectable, OnDestroy, inject } from '@angular/core';
 import { Firestore, collection, doc, query, or, where, onSnapshot, getDoc, setDoc, addDoc, getDocs, updateDoc, arrayUnion, arrayRemove } from '@angular/fire/firestore';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { AuthService } from './auth.service';
-import { Campaign, CampaignRequest, User, Work } from './interfaces';
+import { Campaign, CampaignRequest, Character, User, Work } from './interfaces';
 import { Unsubscribe } from '@angular/fire/auth';
 
 @Injectable({
@@ -21,6 +21,7 @@ export class FirestoreService implements OnDestroy {
   private associated_users: Map<string, User> = new Map();
   public campaigns: Map<string, Campaign> = new Map();
   public works: Map<string, Map<string, Work>> = new Map();
+  public characters: Map<string, Map<string, Character>> = new Map();
 
   constructor() {
     this.user_sub = this.auth.user.subscribe(u => {
@@ -96,6 +97,8 @@ export class FirestoreService implements OnDestroy {
             this.unlisten_works(change.doc.id);
             this.works.set(change.doc.id, new Map());
             this.create_work_listener(change.doc.id);
+            this.characters.set(change.doc.id, new Map());
+            this.create_character_listener(change.doc.id);
           }
         }
       })
@@ -117,6 +120,25 @@ export class FirestoreService implements OnDestroy {
       else {
         var new_work = change.doc.data() as Work;
         this.works.get(c_id)?.set(change.doc.id, new_work);
+      }
+
+    }) });
+
+  }
+
+  private create_character_listener(c_id: string) {
+    
+    var q = query( collection(this.firestore, 'campaigns/'.concat(c_id, '/users/', this.user.uid!, '/characters')) );
+    
+    return onSnapshot(q, snapshot => { snapshot.docChanges().forEach( change => {
+
+      if (change.type == 'removed') {
+        this.characters.get(c_id)?.delete(change.doc.id);
+      }
+
+      else {
+        var new_character = change.doc.data() as Character;
+        this.characters.get(c_id)?.set(change.doc.id, new_character);
       }
 
     }) });
@@ -203,6 +225,20 @@ export class FirestoreService implements OnDestroy {
       console.log('User document and character document created successfully');
     } catch (error) {
       console.error('Error creating new player character: ', error);
+    }
+  }
+
+  upload_character_changes(c_id: string, pc_id: string) {
+    setDoc( doc(this.firestore, 'campaigns/'.concat(c_id, '/users/', this.user.uid!,'/characters/', pc_id)), this.characters.get(c_id)?.get(pc_id) );
+  }
+
+  async getUserData(userId: string): Promise<User> {
+    const userDocRef = doc(this.firestore, `users/${userId}`);
+    const userDoc = await getDoc(userDocRef);
+    if (userDoc.exists()) {
+      return userDoc.data() as User;
+    } else {
+      throw new Error('User not found');
     }
   }
 }

@@ -58,6 +58,29 @@
     </div>
 </div>
 
+<!-- <mat-divider></mat-divider>
+
+<p class="center-content">My Characters</p>
+
+@for (entry of this.characters | keyvalue; track entry.key) {
+    <mat-card class="centered-card">
+        <mat-card-content class="center-content">
+            <mat-card-title class="center-content"><button mat-button (click)="this.router.navigate(['campaigns/'.concat(this.c_id, '/pc/', entry.key)])">{{entry.value.name}}</button></mat-card-title>
+            <mat-card-subtitle>
+                {{entry.value.info}}
+                @for (f of entry.value.filterables; track f) {
+                    <mat-chip>{{f}}</mat-chip>
+                }
+            </mat-card-subtitle>
+        </mat-card-content>
+        @if (this.edit_mode) {
+            <mat-card-actions align="end">
+                <button mat-icon-button><mat-icon>delete</mat-icon></button>
+            </mat-card-actions>
+        }
+    </mat-card>
+} -->
+
 <mat-divider></mat-divider>
 
 <p class="center-content">Works</p>
