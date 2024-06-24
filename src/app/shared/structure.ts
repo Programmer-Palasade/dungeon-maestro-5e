@@ -71,6 +71,11 @@ export class Campaign {
         });
     }
 
+    get owner_info(): User {
+        if (this.owner_obj) { return this.owner_obj; }
+        return { uid: '', name: 'Unknown Dungeon Architect', email: '', requests: [] };
+    }
+
     public unsub() {
         if (this.unsub_players) {
             this.unsub_players();
