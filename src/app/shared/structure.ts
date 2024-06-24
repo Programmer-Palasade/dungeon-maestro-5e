@@ -47,9 +47,7 @@ export class Campaign {
                 }
 
                 else {
-                    console.log('Player object created:', change.doc.id);
                     var p = new Player(change.doc.id);
-                    console.log(p);
                     if (this.players.has(change.doc.id)) {
                         let old_p = this.players.get(change.doc.id);
                         old_p?.unsub();
