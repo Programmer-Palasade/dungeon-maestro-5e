@@ -15,10 +15,10 @@
             </mat-card-title>
         </mat-card-header>
         <mat-card-content class="center-content">
-            <span class="center-content">Owner: {{ this.firestore.get_username(this.campaign.owner) }}</span>
+            <span class="center-content">Owner: {{ this.campaign.owner_info.name }}</span>
             <span class="center-content">
-                @for (user of this.campaign.users; track user) {
-                    <button mat-flat-button color="accent" disabled="{{!this.works.has(user)}}">{{this.firestore.get_username(user)}}</button>
+                @for (user of this.campaign.players; track user) {
+                    <button mat-flat-button color="accent" disabled="{{!this.works.has(user[0])}}">{{user[1].name}}</button>
                 }
                 <button mat-mini-fab><mat-icon>add</mat-icon></button>
             </span>
@@ -35,10 +35,10 @@
             <mat-card-title>{{this.campaign.name}}</mat-card-title>
         </mat-card-header>
         <mat-card-content class="center-content">
-            <span class="center-content">Owner: {{ this.firestore.get_username(this.campaign.owner) }}</span>
+            <span class="center-content">Owner: {{ this.campaign.owner_info.name }}</span>
             <span class="center-content">
-                @for (user of this.campaign.users; track user) {
-                    <button mat-flat-button color="accent" disabled="{{!this.works.has(user)}}">{{this.firestore.get_username(user)}}</button>
+                @for (user of this.campaign.players; track user) {
+                    <button mat-flat-button color="accent" (disabled)="!this.works.has(user[0])">{{user[1].name}}</button>
                 }
             </span>
         </mat-card-content>

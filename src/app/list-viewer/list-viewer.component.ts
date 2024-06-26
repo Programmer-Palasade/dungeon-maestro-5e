@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatGridListModule } from '@angular/material/grid-list';
-import { Campaign } from '../shared/interfaces';
+import { Campaign } from '../shared/structure';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
@@ -23,7 +23,7 @@ export class ListViewerComponent {
   constructor() {  }
 
   public async new_campaign() {
-    var new_c: Campaign = { name: "New Adventure", owner: this.firestore.user.uid??"Unknown Dungeon Architect", users: [] };
+    var new_c = new Campaign('')
     const new_cid = await this.firestore.upload_new_campaign(new_c);
     // this.router.navigate(['/campaigns/'.concat(new_cid)]);
   }
