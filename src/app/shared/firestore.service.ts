@@ -252,4 +252,18 @@ export class FirestoreService implements OnDestroy {
       console.error('Error creating new player character: ', error);
     }
   }
+
+  async getUserData(userId: string): Promise<User> {
+    const userDocRef = doc(this.firestore, `users/${userId}`);
+    const userDoc = await getDoc(userDocRef);
+    if (userDoc.exists()) {
+      return userDoc.data() as User;
+    } else {
+      throw new Error('User not found');
+    }
+  }
+
+  update_user(uid: string) {
+    setDoc( doc(this.firestore, 'users', uid), this.user);
+  }
 }

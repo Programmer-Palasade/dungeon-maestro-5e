@@ -16,6 +16,16 @@
                 <button mat-button (click)="this.router.navigate(['login'])">Login</button>
             }
             @else {
+                <div style="padding: 5px;">
+                    <h5>{{this.firestore.user.name}}</h5>
+                    <mat-divider></mat-divider>
+                </div>
+
+                
+                <div>
+                    <button mat-button (click)="this.router.navigate(['/user/'.concat(this.firestore.user.uid!)])">Profile</button>
+                </div>
+                
                 <div>
                     <button mat-button (click)="this.router.navigate(['notifications'])" >
                         <span matBadgeSize="small" matBadgePosition="before" [matBadgeHidden]="this.firestore.user.requests.length == 0" matBadge={{this.firestore.user.requests.length}}>
