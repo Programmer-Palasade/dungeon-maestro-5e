@@ -34,7 +34,7 @@ export class WorkDetailComponent {
   @Input({required: true}) w_id = '';
 
   get campaign(): Campaign {
-    return this.firestore.campaigns.get(this.c_id) ?? new Campaign('');
+    return this.firestore.campaigns.get(this.c_id) ?? new Campaign('', new Map());
   }
 
   get work(): Work {
