@@ -72,7 +72,7 @@ export class FirestoreService implements OnDestroy {
           this.campaigns.get(change.doc.id)?.unsub;
           this.campaigns.delete(change.doc.id);
         }
-        let new_c = new Campaign(change.doc.id);
+        let new_c = new Campaign(change.doc.id, this.associated_users);
         new_c.update( change.doc.data() as Campaign );
         new_c.listen(this.firestore, this.user);
         this.campaigns.set(change.doc.id, new_c);
@@ -175,14 +175,8 @@ export class FirestoreService implements OnDestroy {
     }
   }
 
-  async getUserData(userId: string): Promise<User> {
-    const userDocRef = doc(this.firestore, `users/${userId}`);
-    const userDoc = await getDoc(userDocRef);
-    if (userDoc.exists()) {
-      return userDoc.data() as User;
-    } else {
-      throw new Error('User not found');
-    }
+  getUserData(userId: string): User {
+    return this.associated_users.get(userId)??{uid: userId, name:'Unknown Adventurer', email:'', requests: []}
   }
 
   update_user(uid: string) {
