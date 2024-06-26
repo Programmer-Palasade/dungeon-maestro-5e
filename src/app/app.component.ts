@@ -8,12 +8,13 @@ import { AuthService } from './shared/auth.service';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { FirestoreService } from './shared/firestore.service';
+import { MatDividerModule } from '@angular/material/divider';
 
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, MatToolbarModule, MatButtonModule, MatBadgeModule, MatIconModule, MatSidenavModule, MatGridListModule],
+  imports: [RouterOutlet, MatToolbarModule, MatButtonModule, MatBadgeModule, MatDividerModule, MatIconModule, MatSidenavModule, MatGridListModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
