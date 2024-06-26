@@ -37,7 +37,7 @@ export class CampaignDetailComponent {
   }
 
   get campaign(): Campaign {
-    return this.firestore.campaigns.get(this.c_id) ?? new Campaign('');
+    return this.firestore.campaigns.get(this.c_id) ?? new Campaign('', new Map());
   }
 
   get works(): Map<string, Work> {

@@ -10,7 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { User } from '../shared/interfaces';
+import { User } from '../shared/structure';
 import { FormsModule } from '@angular/forms';
 
 @Component({

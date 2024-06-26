@@ -1,4 +1,4 @@
-import { CollectionReference, DocumentChange, Firestore, collection, doc, onSnapshot, or, query, where } from "@angular/fire/firestore";
+import { CollectionReference, DocumentChange, Firestore, collection, doc, getDoc, onSnapshot, or, query, where } from "@angular/fire/firestore";
 import { Unsubscribe } from "@angular/fire/auth";
 
 
@@ -13,14 +13,16 @@ export class Campaign {
     public identifiers: Map<string, string> = new Map();
     public filters: Map<string, string[]> = new Map();
 
+    private user_map: Map<string, User>;
     private owner_obj: User|undefined;
     private admin: boolean = false;
     private unsub_players: Unsubscribe|undefined;
     private unsub_works: Unsubscribe|undefined;
     private unsub_owner: Unsubscribe|undefined;
 
-    constructor( doc_id: string) {
+    constructor( doc_id: string, user_map: Map<string, User> ) {
         this.doc_id = doc_id;
+        this.user_map = user_map;
     }
 
     public update( c: Campaign ) {
@@ -38,12 +40,13 @@ export class Campaign {
         } );
 
         this.unsub_players = onSnapshot( collection(firestore, 'campaigns', this.doc_id, 'players'), ss => {
-            ss.docChanges().forEach( change => {
+            ss.docChanges().forEach( async change => {
 
                 if (change.type == 'removed') {
                     let p = this.players.get(change.doc.id);
                     p?.unsub();
                     this.players.delete(change.doc.id);
+                    this.user_map.delete(change.doc.id);
                 }
 
                 else {
@@ -51,6 +54,10 @@ export class Campaign {
                     if (this.players.has(change.doc.id)) {
                         let old_p = this.players.get(change.doc.id);
                         old_p?.unsub();
+                    }
+                    let u_doc = await getDoc( doc(firestore, 'users', change.doc.id) );
+                    if (u_doc.exists()) {
+                        this.user_map.set( change.doc.id, u_doc.data() as User );
                     }
                     p.update( change.doc.data() as Player );
                     p.listen( collection(firestore, 'campaigns', this.doc_id, 'players', change.doc.id, 'characters'), user, this.work_logic);
