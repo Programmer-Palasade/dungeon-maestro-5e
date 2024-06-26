@@ -1,4 +1,4 @@
-@if (!this.firestore.campaigns.has(this.c_id) || !this.firestore.works.get(this.c_id)?.has(this.w_id)) { {{this.router.navigate(['/home'])}} }
+@if (!this.firestore.campaigns.has(this.c_id) || !this.firestore.campaigns.get(this.c_id)?.works?.has(this.w_id)) { {{this.router.navigate(['/home'])}} }
 
 @if (this.firestore.user.uid == this.campaign.owner) {
     <span class="center-content"><mat-slide-toggle (change)="this.edit()">Edit Mode</mat-slide-toggle></span>
@@ -71,14 +71,14 @@
             <span class="center-content">Beholders</span>
             <mat-chip-set class="center-content">
                 @for (u_id of this.work.beholders; track u_id) {
-                    <mat-chip>{{this.firestore.get_username(u_id)}}</mat-chip>
+                    <mat-chip>{{this.campaign.players.get(u_id)?.name}}</mat-chip>
                 }
             </mat-chip-set>
 
             <mat-divider></mat-divider>
             <div class="center-content">
                 <p>
-                    @for (seg of this.linker.generate_links(this.c_id, this.work.info); track seg.ind) {
+                    @for (seg of this.linker.generate_links(this.campaign.identifiers, this.work.info); track seg.ind) {
                         @if (seg.link) {
                             <a [routerLink]="seg.link">{{seg.str}}</a>
                         }
