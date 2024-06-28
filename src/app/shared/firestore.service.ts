@@ -74,7 +74,7 @@ export class FirestoreService implements OnDestroy {
         }
         let new_c = new Campaign(change.doc.id, this.associated_users);
         new_c.update( change.doc.data() as Campaign );
-        new_c.listen(this.firestore, this.user);
+        new_c.listen(this.firestore, this);
         this.campaigns.set(change.doc.id, new_c);
       });
     });
@@ -125,10 +125,11 @@ export class FirestoreService implements OnDestroy {
   }
 
   get_filtered_works(c_id: string, filters: string[]): Map<string, Work> {
-    if (filters.length == 0) {return this.campaigns.get(c_id)?.works??new Map();}
+    let works = this.campaigns.get(c_id)?.works ?? new Map<string, Work>();
+    if (filters.length == 0) {return works;}
     var filtered: Map<string, Work> = new Map();
     for (let filter of filters) {
-      for (let entry of (this.campaigns.get(c_id)?.works)??[]) {
+      for (let entry of works) {
         var key = entry[0]
         var w = entry[1];
         if (w && w.filterables.find( f => { return f == filter; } ) && !filtered.has(key) ) {
@@ -165,9 +166,9 @@ export class FirestoreService implements OnDestroy {
         name: 'New Character'
       };
 
-      setDoc( doc(this.firestore, "campaigns/".concat(campaignId,'/users/'), userId), data);
+      setDoc( doc(this.firestore, "campaigns/".concat(campaignId,'/players/'), userId), data);
   
-      addDoc( collection(this.firestore, 'campaigns/'.concat(campaignId, '/users/', userId,'/characters')), characterData);
+      addDoc( collection(this.firestore, 'campaigns/'.concat(campaignId, '/players/', userId,'/characters')), characterData);
   
       console.log('User document and character document created successfully');
     } catch (error) {
