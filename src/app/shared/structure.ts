@@ -1,10 +1,11 @@
 import { CollectionReference, DocumentChange, Firestore, collection, doc, getDoc, onSnapshot, or, query, where } from "@angular/fire/firestore";
 import { Unsubscribe } from "@angular/fire/auth";
+import { FirestoreService } from "./firestore.service";
 
 
 export class Campaign {
 
-    private doc_id: string;
+    public doc_id: string;
     public name: string = "New Adventure";
     public owner: string = "Unknown Dungeon Architect";
     public info: string = "A (mysterious/amazing/dramatic/heartwarming/comical/depressing) (adventure/quest/dungeon crawl/legend/business? venture)";
@@ -32,11 +33,13 @@ export class Campaign {
         this.unsub();
     }
 
-    public listen(firestore: Firestore, user: User) {
+    public listen(firestore: Firestore, service: FirestoreService) {
         this.unsub();
         
         this.unsub_owner = onSnapshot( doc(firestore, 'users', this.owner), ss => {
-            if (ss.exists()) { this.owner_obj = ss.data() as User; }
+            if (ss.exists()) { 
+                this.owner_obj = ss.data() as User;
+             }
         } );
 
         this.unsub_players = onSnapshot( collection(firestore, 'campaigns', this.doc_id, 'players'), ss => {
@@ -55,19 +58,22 @@ export class Campaign {
                         let old_p = this.players.get(change.doc.id);
                         old_p?.unsub();
                     }
-                    let u_doc = await getDoc( doc(firestore, 'users', change.doc.id) );
-                    if (u_doc.exists()) {
-                        this.user_map.set( change.doc.id, u_doc.data() as User );
+                    if (!this.user_map.has(change.doc.id)) {
+                        let u_doc = await getDoc( doc(firestore, 'users', change.doc.id) );
+                        if (u_doc.exists()) {
+                            this.user_map.set( change.doc.id, u_doc.data() as User );
+                        }
                     }
                     p.update( change.doc.data() as Player );
-                    p.listen( collection(firestore, 'campaigns', this.doc_id, 'players', change.doc.id, 'characters'), user, this.work_logic);
+                    p.listen( collection(firestore, 'campaigns', this.doc_id, 'players', change.doc.id, 'characters'), service.user, this.work_logic );
                     this.players.set(change.doc.id, p);
                 }
             });
         });
 
+        if (service.user.uid == this.owner) { this.admin = true; }
         let q_works = query( collection(firestore, 'campaigns', this.doc_id, 'works') );
-        if (!this.admin) { q_works = query( q_works, or( where('supervisible', '==', true), where('beholders', 'array-contains', user.uid) ) ); }
+        if (!this.admin) { q_works = query( q_works, or( where('supervisible', '==', true), where('beholders', 'array-contains', service.user.uid) ) ); }
         this.unsub_works = onSnapshot( q_works, ss => {
             ss.docChanges().forEach( change => {
                 this.work_logic(change);
@@ -102,6 +108,7 @@ export class Campaign {
         }
         this.owner_obj = undefined;
         this.unsub_owner = undefined;
+        this.admin = false;
     }
 
     private work_logic(change: DocumentChange) {
@@ -139,7 +146,7 @@ export class Campaign {
 
 export class Player {
     private doc_id: string;
-    public name: string = "New Character";
+    public name: string = "New Player";
     public notes: string = "Slightly better than an NPC.";
     public characters: Map<string, Character> = new Map();
 

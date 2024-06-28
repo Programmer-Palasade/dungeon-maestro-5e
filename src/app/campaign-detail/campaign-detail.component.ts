@@ -41,7 +41,6 @@ export class CampaignDetailComponent {
   }
 
   get works(): Map<string, Work> {
-    console.log(this.campaign.works);
     return this.firestore.get_filtered_works(this.c_id, this.selected_filters);
   }
 
