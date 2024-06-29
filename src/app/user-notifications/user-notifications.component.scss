@@ -1,0 +1,59 @@
+mat-card{
+    border: 2px ridge #c2ab32;
+}
+
+mat-card-title {
+    font-family:'Matura MT Script Capitals';
+}
+
+mat-card-subtitle {
+    font-family:'Times New Roman', Times, serif;
+}
+
+.notifications-container {
+    position: relative;
+    padding: 20px;
+    border: 2px ridge #A9A9A9; /* Skyrim-like grey color for the border */
+    border-top-color: #A9A9A9;
+    border-radius: 10px;
+    text-align: center; /* Center the text inside the container */
+    width: 65%;
+    margin: auto;
+    background-color: #0000003d
+  }
+  
+  .notifications-title {
+    position: relative;
+    display: inline-block;
+    padding: 0 10px;
+    font-family: 'Matura MT Script Capitals', cursive; /* Apply medieval font */
+    color: #FFFFFF; /* Skyrim-like grey color for the text */
+    z-index: 1;
+    background-color: transparent; /* Ensure no background color */
+  }
+  
+
+  
+  .notifications-title::before,
+  .notifications-title::after {
+    content: '';
+    position: absolute;
+    top: 50%; /* Center it vertically within the h1 */
+    width: 50vw; /* Adjust based on your layout needs */
+    height: 2px;
+    background-color: #A9A9A9; /* Same as border color */
+    z-index: -1; /* Behind the text */
+  }
+  
+  .notifications-title::before {
+    left: -50vw; /* Extend to the left */
+  }
+  
+  .notifications-title::after {
+    right: -50vw; /* Extend to the right */
+  }
+  
+  .notifications-content {
+    margin-top: 50px;
+  }
+  
