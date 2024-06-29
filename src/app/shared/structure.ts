@@ -9,6 +9,7 @@ export class Campaign {
     public name: string = "New Adventure";
     public owner: string = "Unknown Dungeon Architect";
     public info: string = "A (mysterious/amazing/dramatic/heartwarming/comical/depressing) (adventure/quest/dungeon crawl/legend/business? venture)";
+    public users: string[] = [];
     public players: Map<string, Player> = new Map();
     public works: Map<string, Work> = new Map();
     public identifiers: Map<string, string> = new Map();
@@ -30,6 +31,7 @@ export class Campaign {
         this.name = c.name;
         this.owner = c.owner;
         this.info = c.info;
+        this.users = c.users;
         this.unsub();
     }
 
@@ -166,7 +168,7 @@ export class Player {
 
         this.unsub_characters = onSnapshot( character_collection, ss => {
             ss.docChanges().forEach( change => {
-                if (user.uid != this.doc_id) { passthrough_method(change) }
+                if (user.uid != this.doc_id) { /* passthrough_method(change) */ }
                 else {
                     if (change.type == 'removed') { this.characters.delete(change.doc.id); }
                     else {
