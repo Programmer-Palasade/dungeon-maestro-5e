@@ -2,6 +2,10 @@
 <div class="notifications-container">
   <h1 class="notifications-title">Notifications</h1>
   <div class="notifications-content">
+    @if (this.firestore.user.requests.length == 0) {
+        <mat-card>No new requests in your inbox, but hey, at least the tavern's still open!</mat-card>
+    }
+    @else {
     <ng-container *ngFor="let request of this.firestore.user.requests">
         <mat-card class="centered-card" >
             <mat-card-content style="text-align: center;">
@@ -18,6 +22,7 @@
             </mat-card-actions>
         </mat-card>
     </ng-container>
+    }
   </div>
 </div>
 

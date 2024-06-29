@@ -1,0 +1,20 @@
+  mat-card{
+    border: 2px ridge #c2ab32;
+    background-color: #00000090;
+    cursor: pointer;
+  }
+
+  mat-card:hover{
+    border: 2px ridge #312b0d;
+    color: #c2ab32;
+  }
+  
+  mat-card-title {
+    font-family:'Matura MT Script Capitals';
+    text-align: center;
+  }
+  
+  mat-card-subtitle {
+    font-family:'Times New Roman', Times, serif;
+    text-align: center;
+  }
