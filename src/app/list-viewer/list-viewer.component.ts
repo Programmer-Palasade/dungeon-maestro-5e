@@ -28,4 +28,12 @@ export class ListViewerComponent {
     // this.router.navigate(['/campaigns/'.concat(new_cid)]);
   }
 
+  public async delete_campaign(c_id: string): Promise<void> {
+    return this.firestore.delete_campaign(c_id);
+  }
+
+  public async leave_campaign(c_id: string): Promise<void> {
+    return this.firestore.remove_user( c_id, this.firestore.user.uid??'' );
+  }
+
 }

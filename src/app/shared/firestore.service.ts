@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy, inject } from '@angular/core';
-import { Firestore, collection, doc, query, or, where, onSnapshot, getDoc, setDoc, addDoc, getDocs, updateDoc, arrayUnion, arrayRemove, DocumentReference } from '@angular/fire/firestore';
+import { Firestore, collection, doc, query, or, where, onSnapshot, getDoc, setDoc, addDoc, getDocs, updateDoc, arrayUnion, arrayRemove, DocumentReference, deleteDoc } from '@angular/fire/firestore';
 import { Subscription } from 'rxjs';
 import { AuthService } from './auth.service';
 import { Campaign, CampaignRequest, User, Work } from './structure';
@@ -81,11 +81,20 @@ export class FirestoreService implements OnDestroy {
   }
 
   async upload_new_campaign(c: Campaign): Promise<string> {
-    return addDoc(this.campaigns_col, c).then( new_ref => { return new_ref.id; } );
+    let new_c = { name: c.name, owner: c.owner, users: c.users };
+
+    return addDoc(this.campaigns_col, new_c).then( new_ref => { return new_ref.id; } );
   }
 
   upload_campaign_changes(c_id: string) {
-    setDoc( doc(this.firestore, 'campaigns/'.concat(c_id)), this.campaigns.get(c_id) );
+    let c = this.campaigns.get(c_id)??new Campaign(c_id, new Map());
+    let new_c = { name: c.name, owner: c.owner, users: c.users };
+    updateDoc( doc(this.campaigns_col, c_id), new_c );
+  }
+
+  async delete_campaign(c_id: string): Promise<void> {
+    if (this.user.uid != this.campaigns.get(c_id)?.owner) { return; }
+    return deleteDoc( doc( this.campaigns_col, c_id ) );
   }
 
   async upload_new_work(c_id: string, w: Work): Promise<string> {
@@ -93,11 +102,23 @@ export class FirestoreService implements OnDestroy {
   }
 
   upload_work_changes(c_id: string, w_id: string) {
-    setDoc( doc(this.firestore, 'campaigns/'.concat(c_id, '/works', w_id)), this.campaigns.get(c_id)?.works.get(w_id) );
+    let w = this.campaigns.get(c_id)?.works.get(w_id) ?? { beholders: [], filterables: [], identifiers: [], info: 'Description of some sort.', name: 'New Work', supervisible: false };
+    setDoc( doc(this.firestore, 'campaigns/'.concat(c_id, '/works', w_id)), w );
+  }
+
+  async delete_work(c_id: string, w_id: string): Promise<void> {
+    return deleteDoc( doc( this.firestore, 'campaigns', c_id, 'works', w_id ) );
   }
 
   get_username(u_id: string): string {
     return this.associated_users.get(u_id)?.name ?? 'Unknown Adventurer';
+  }
+
+  async remove_user(c_id: string, u_id: string): Promise<void> {
+    if (this.campaigns.get(c_id)?.users.find( str => { return (str == u_id); } )) {
+      let c = this.campaigns.get(c_id)??new Campaign('', new Map());
+      return updateDoc( doc(this.campaigns_col, c_id), { users: arrayRemove( u_id ) } ).then( _ => { return deleteDoc( doc(this.firestore, 'campaigns', c_id, 'players', u_id) ); });
+    }
   }
 
   send_campaign_invite(u_id: string, c_id: string, c_name: string): void {

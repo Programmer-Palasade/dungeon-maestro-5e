@@ -1,4 +1,4 @@
-import { CollectionReference, DocumentChange, Firestore, collection, doc, getDoc, onSnapshot, or, query, where } from "@angular/fire/firestore";
+import { CollectionReference, DocumentChange, Firestore, collection, deleteDoc, doc, getDoc, onSnapshot, or, query, where } from "@angular/fire/firestore";
 import { Unsubscribe } from "@angular/fire/auth";
 import { FirestoreService } from "./firestore.service";
 
@@ -9,6 +9,7 @@ export class Campaign {
     public name: string = "New Adventure";
     public owner: string = "Unknown Dungeon Architect";
     public info: string = "A (mysterious/amazing/dramatic/heartwarming/comical/depressing) (adventure/quest/dungeon crawl/legend/business? venture)";
+    public users: string[] = []
     public players: Map<string, Player> = new Map();
     public works: Map<string, Work> = new Map();
     public identifiers: Map<string, string> = new Map();
