@@ -1,4 +1,35 @@
 .flex-spacer {
     flex: auto;
     padding: auto;
+    text-align: center;
 }
+
+.icon {
+    height: 50px;
+}
+
+mat-toolbar {
+    h1 {
+        font-size: x-large;
+        font-family: 'Matura MT Script Capitals';
+        color: #FFE87F;
+    }
+}
+
+mat-icon {
+    cursor: pointer;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    width: fit-content;
+    cursor: pointer;
+  }
+  
+  .header img {
+    width: 40px; /* Adjust the size of the image if needed */
+    height: auto;
+  }
+  

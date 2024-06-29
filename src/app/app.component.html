@@ -2,9 +2,13 @@
     @if (this.auth.logged_in) {
         <mat-sidenav-container>
             <mat-sidenav-content>
-                <mat-toolbar>
-                    <button mat-icon-button mat-tooltip="Home" (click)="this.router.navigate(['home']);"><mat-icon>home</mat-icon></button>
-                    <span class="flex-spacer">DungeonMaestro 5e</span>
+                <mat-toolbar class="nav-header">
+                    <div class="flex-spacer">
+                        <div class="header" (click)="this.router.navigate(['home']);">
+                            <img class="icon" src="../assets/img/dm5e-icon.png">
+                            <h1>DungeonMaestro5e</h1>
+                        </div>
+                    </div>
                     <mat-icon matBadgeSize="small" matBadgePosition="before" [matBadgeHidden]="this.firestore.user.requests.length == 0" matBadge={{this.firestore.user.requests.length}} mat-icon-button mat-tooltip="Menu" (click)="sidenav.toggle()">menu</mat-icon>
                 </mat-toolbar>
         

@@ -3,7 +3,7 @@
 // For more information: https://material.angular.io/guide/theming
 @use '@angular/material' as mat;
 // Plus imports for other components in your app.
-@use 'app/themes/dark-orange.scss' as dark-orange;
+@use 'app/themes/dungeon-yellow.scss' as dungeon-yellow;
 
 // Include the common styles for Angular Material. We include this here so that you only
 // have to load a single css file for Angular Material in your app.
@@ -26,7 +26,7 @@
 // Alternatively, you can import and @include the theme mixins for each component
 // that you are using.
 :root {
-  @include mat.all-component-themes(dark-orange.$dark-theme);
+  @include mat.all-component-themes(dungeon-yellow.$dark-theme);
 }
 
 // Comment out the line below if you want to use the pre-defined typography utility classes.
@@ -42,6 +42,7 @@ body { @extend .mat-app-background; margin: 0; }
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Matura MT Script Capitals'
 }
+
 
 .center-content {
   display: flex;
