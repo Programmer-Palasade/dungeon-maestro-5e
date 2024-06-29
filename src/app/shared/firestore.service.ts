@@ -111,6 +111,7 @@ export class FirestoreService implements OnDestroy {
   }
 
   get_username(u_id: string): string {
+    console.log(this.associated_users);
     return this.associated_users.get(u_id)?.name ?? 'Unknown Adventurer';
   }
 

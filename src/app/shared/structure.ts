@@ -136,9 +136,10 @@ export class Campaign {
                 if (this.filters.has(filter)) { this.filters.get(filter)?.push(change.doc.id); }
                 else { this.filters.set(filter, [change.doc.id]); }
             }
-            for (let identity of new_work.identifiers) {
+            /* for (let identity of new_work.identifiers) {
                 this.identifiers.set(identity, '/campaigns/'.concat(this.doc_id, '/', change.doc.id));
-            }
+            } */
+           this.identifiers.set(new_work.name, '/campaigns/'.concat(this.doc_id, '/', change.doc.id)); // TEMP NAME ONLY IDENTIFIER
         }
     }
 

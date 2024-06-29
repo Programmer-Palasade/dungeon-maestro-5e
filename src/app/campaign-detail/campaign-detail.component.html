@@ -17,10 +17,9 @@
         <mat-card-content class="center-content">
             <span class="center-content">Owner: {{ this.campaign.owner_info.name }}</span>
             <span class="center-content">
-                @for (user of this.campaign.players; track user) {
-                    <button mat-flat-button color="accent" disabled="{{!this.works.has(user[0])}}">{{user[1].name}}</button>
+                @for (user of this.campaign.players; track user[1]) {
+                    <button mat-flat-button>{{ this.firestore.get_username(user[0]) }}</button>
                 }
-                <button mat-mini-fab><mat-icon>add</mat-icon></button>
             </span>
             <span class="center-content">
                 <button mat-fab (click)="this.save()"><mat-icon>save</mat-icon></button>
@@ -37,8 +36,8 @@
         <mat-card-content class="center-content">
             <span class="center-content">Owner: {{ this.campaign.owner_info.name }}</span>
             <span class="center-content">
-                @for (user of this.campaign.players; track user) {
-                    <button mat-flat-button color="accent" (disabled)="!this.works.has(user[0])">{{user[1].name}}</button>
+                @for (user of this.campaign.players; track user[1]) {
+                    <button mat-flat-button color="accent">{{ this.firestore.get_username(user[0]) }}</button>
                 }
             </span>
         </mat-card-content>
