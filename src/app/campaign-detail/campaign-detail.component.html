@@ -77,7 +77,7 @@
             </mat-card-content>
             @if (this.edit_mode) {
                 <mat-card-actions align="end">
-                    <button mat-icon-button><mat-icon>delete</mat-icon></button>
+                    <button mat-icon-button (click)="this.delete_work(entry.key)"><mat-icon>delete</mat-icon></button>
                 </mat-card-actions>
             }
         </mat-card>
