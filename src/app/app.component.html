@@ -1,6 +1,35 @@
-<header>
     @if (this.auth.logged_in) {
-        <mat-sidenav-container>
+        <mat-sidenav-container hasBackdrop="true">
+            <mat-sidenav #sidenav class="drawer-content" position="end" [fixedInViewport]="true" mode='over'>
+                @if (!this.auth.logged_in) {
+                    <button mat-button (click)="this.router.navigate(['login'])">Login</button>
+                }
+                @else {
+                    <div style="padding: 5px;">
+                        <h4>{{this.firestore.user.name}}</h4>
+                        <mat-divider></mat-divider>
+                    </div>
+    
+                    
+                    <div>
+                        <button mat-button (click)="this.router.navigate(['/user/'.concat(this.firestore.user.uid!)])">Profile</button>
+                    </div>
+                    
+                    <div>
+                        <button mat-button (click)="this.router.navigate(['notifications'])">
+                            <span matBadgeSize="small" matBadgePosition="before" [matBadgeHidden]="this.firestore.user.requests.length == 0" matBadge={{this.firestore.user.requests.length}}>
+                                @if (this.firestore.user.requests.length > 0) {&nbsp; Notifications}
+                                @else {Notifications}
+                            </span>
+                        </button>
+                    </div>
+    
+                    <div>
+                        <button mat-button (click)="this.logout()">Logout</button>
+                    </div>
+                }
+            </mat-sidenav>
+
             <mat-sidenav-content>
                 <mat-toolbar class="nav-header">
                     <div class="flex-spacer">
@@ -12,41 +41,11 @@
                     <mat-icon matBadgeSize="small" matBadgePosition="before" [matBadgeHidden]="this.firestore.user.requests.length == 0" matBadge={{this.firestore.user.requests.length}} mat-icon-button mat-tooltip="Menu" (click)="sidenav.toggle()">menu</mat-icon>
                 </mat-toolbar>
         
-                
+                <body>
+                    <div style="padding: 10px;" class="body-content"><router-outlet></router-outlet></div>
+                </body>
             </mat-sidenav-content>
         
-        <mat-sidenav #sidenav class="drawer-content" position="end" [fixedInViewport]="true">
-            @if (!this.auth.logged_in) {
-                <button mat-button (click)="this.router.navigate(['login'])">Login</button>
-            }
-            @else {
-                <div style="padding: 5px;">
-                    <h4>{{this.firestore.user.name}}</h4>
-                    <mat-divider></mat-divider>
-                </div>
-
-                
-                <div>
-                    <button mat-button (click)="this.router.navigate(['/user/'.concat(this.firestore.user.uid!)])">Profile</button>
-                </div>
-                
-                <div>
-                    <button mat-button (click)="this.router.navigate(['notifications'])">
-                        <span matBadgeSize="small" matBadgePosition="before" [matBadgeHidden]="this.firestore.user.requests.length == 0" matBadge={{this.firestore.user.requests.length}}>
-                            @if (this.firestore.user.requests.length > 0) {&nbsp; Notifications}
-                            @else {Notifications}
-                        </span>
-                    </button>
-                </div>
-
-                <div>
-                    <button mat-button (click)="this.logout()">Logout</button>
-                </div>
-            }
-        </mat-sidenav>
+        
         </mat-sidenav-container>
     }
-</header>
-<main>
-    <div class="body-content"><router-outlet></router-outlet></div>
-</main>
