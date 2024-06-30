@@ -163,7 +163,8 @@ export class FirestoreService implements OnDestroy {
 
 
   accept_campaign_request(user_id: string, campaign_request: CampaignRequest) {
-    updateDoc( doc( this.campaigns_col, campaign_request.cid! ), { users: arrayUnion( user_id ) } );
+
+    this.add_new_user(campaign_request.cid!, user_id);
 
     this.create_new_player_character(campaign_request.cid!, user_id);
 
@@ -177,9 +178,17 @@ export class FirestoreService implements OnDestroy {
     updateDoc(doc(this.firestore, 'users/'.concat(user_id)), data);
   }
 
+  async add_new_user(campaignId: string, userId: string): Promise<void> {
+    let c_doc = await getDoc( doc(this.firestore, 'campaigns', campaignId) );
+    if (c_doc.exists()) {
+      updateDoc( doc(this.firestore, 'campaigns', campaignId), c_doc.data()['users'].append(userId) );
+    }
+  }
+
   async create_new_player_character(campaignId: string, userId: string): Promise<void> {
     try {
       const data = {
+        name: "New Player",
         notes: "These are your notes!"
       }
 

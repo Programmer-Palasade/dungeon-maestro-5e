@@ -169,7 +169,7 @@ export class Player {
 
         this.unsub_characters = onSnapshot( character_collection, ss => {
             ss.docChanges().forEach( change => {
-                if (user.uid != this.doc_id) { passthrough_method(change) }
+                if (user.uid != this.doc_id) { /* passthrough_method(change) */ }
                 else {
                     if (change.type == 'removed') { this.characters.delete(change.doc.id); }
                     else {

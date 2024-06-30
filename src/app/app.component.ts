@@ -2,7 +2,7 @@ import { Component, ViewChild, inject } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar'
 import { MatButtonModule } from '@angular/material/button';
-import {MatBadgeModule} from '@angular/material/badge';
+import { MatBadgeModule } from '@angular/material/badge';
 import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from './shared/auth.service';
 import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
