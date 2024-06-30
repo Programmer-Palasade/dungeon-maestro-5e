@@ -28,8 +28,8 @@
 
             <span class="center-content">Beholders</span>
             <mat-chip-listbox multiple>
-                @for (entry of this.users; track entry[0]) {
-                    <mat-chip-option [selected]="this.on_beholders(entry[0])" (selectionChange)="this.toggle_beholder(entry[0])">{{entry[1]}}</mat-chip-option>
+                @for (user of this.campaign.users; track user) {
+                    <mat-chip-option [selected]="this.on_beholders(user)" (selectionChange)="this.toggle_beholder(user)">{{this.firestore.get_username(user)}}</mat-chip-option>
                 }
             </mat-chip-listbox>
 

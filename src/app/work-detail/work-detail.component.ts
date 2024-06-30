@@ -43,14 +43,6 @@ export class WorkDetailComponent {
     return this.firestore.campaigns.get(this.c_id)?.works?.get(this.w_id) ?? {beholders: [], filterables: [], identifiers: [], info: '', name: '', supervisible: false};
   }
 
-  get users(): Map<string, string> {
-    let users: Map<string, string> = new Map();
-    for (let u_id in this.campaign.users) {
-      users.set( u_id, this.firestore.get_username(u_id) );
-    }
-    return users;
-  }
-
   async save() {
     if (this.changes_made) {
       this.changes_made = false;
