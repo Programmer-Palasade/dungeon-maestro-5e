@@ -28,8 +28,8 @@
 
             <span class="center-content">Beholders</span>
             <mat-chip-listbox multiple>
-                @for (entry of this.users; track entry[0]) {
-                    <mat-chip-option [selected]="this.on_beholders(entry[0])" (selectionChange)="this.toggle_beholder(entry[0])">{{entry[1]}}</mat-chip-option>
+                @for (user of this.campaign.users; track user) {
+                    <mat-chip-option [selected]="this.in_beholders(user)" (selectionChange)="this.toggle_beholder(user)">{{this.firestore.get_username(user)}}</mat-chip-option>
                 }
             </mat-chip-listbox>
 
@@ -39,10 +39,12 @@
 
             <mat-divider></mat-divider>
 
-            <mat-form-field appearance="outline" color="primary">
-                <mat-label>Work Info</mat-label>
-                <textarea #infoInput matInput [value]="this.work.info" (blur)="update_info(infoInput.value)"></textarea>
-            </mat-form-field>
+            <div>
+                <mat-form-field appearance="outline" color="primary">
+                    <mat-label>Work Info</mat-label>
+                    <textarea matNativeControl cdkTextareaAutosize #infoInput style="max-width: fit-content; max-height: fit-content;" [value]="this.work.info" (blur)="update_info(infoInput.value)"></textarea>
+                </mat-form-field>
+            </div>
             
             <span class="center-content">
                 <button mat-fab (click)="this.save()"><mat-icon>save</mat-icon></button>

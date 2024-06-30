@@ -64,3 +64,11 @@ h1, h2, h3, h4, h5, h6 {
   max-width: 350px;
   margin: 8px auto;
 }
+
+.input-box {
+  display: flex;
+  justify-self: center;
+  align-self: center;
+  max-width: fit-content;
+  margin: auto;
+}
