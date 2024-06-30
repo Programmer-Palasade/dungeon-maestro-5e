@@ -1,5 +1,5 @@
 import { Component, Input, inject } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { FirestoreService } from '../shared/firestore.service';
 import { Campaign, Work } from '../shared/structure';
 import { ENTER, COMMA } from '@angular/cdk/keycodes';
@@ -11,14 +11,13 @@ import { MatChipEditedEvent, MatChipInputEvent, MatChipsModule } from '@angular/
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatSelectModule } from '@angular/material/select';
 import { LinkingService } from '../shared/linking.service';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 
 @Component({
   selector: 'app-work-detail',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, MatCardModule, MatButtonModule, MatInputModule, MatFormFieldModule, MatChipsModule, MatIconModule, MatDividerModule, MatSlideToggleModule, MatSelectModule],
+  imports: [RouterLink, MatCardModule, MatButtonModule, MatInputModule, MatFormFieldModule, MatChipsModule, MatIconModule, MatDividerModule, MatSlideToggleModule, CdkTextareaAutosize],
   templateUrl: './work-detail.component.html',
   styleUrl: './work-detail.component.scss'
 })
@@ -107,7 +106,6 @@ export class WorkDetailComponent {
     else {
       this.add_beholder(u_id);
     }
-    console.log(this.work.beholders, this.campaign.users);
   }
 
   add_beholder(u_id: string) {

@@ -39,10 +39,12 @@
 
             <mat-divider></mat-divider>
 
-            <mat-form-field appearance="outline" color="primary">
-                <mat-label>Work Info</mat-label>
-                <textarea #infoInput matInput [value]="this.work.info" (blur)="update_info(infoInput.value)"></textarea>
-            </mat-form-field>
+            <div>
+                <mat-form-field appearance="outline" color="primary">
+                    <mat-label>Work Info</mat-label>
+                    <textarea matNativeControl cdkTextareaAutosize #infoInput style="max-width: fit-content; max-height: fit-content;" [value]="this.work.info" (blur)="update_info(infoInput.value)"></textarea>
+                </mat-form-field>
+            </div>
             
             <span class="center-content">
                 <button mat-fab (click)="this.save()"><mat-icon>save</mat-icon></button>
