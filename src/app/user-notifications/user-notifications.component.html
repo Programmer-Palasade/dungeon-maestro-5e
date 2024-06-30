@@ -1,4 +1,32 @@
-<mat-grid-list cols="1" rowHeight="100px" gutterSize="5px">
+
+<div class="notifications-container">
+  <h1 class="notifications-title">Notifications</h1>
+  <div class="notifications-content">
+    @if (this.firestore.user.requests.length == 0) {
+        <mat-card>No new requests in your inbox, but hey, at least the tavern's still open!</mat-card>
+    }
+    @else {
+    <ng-container *ngFor="let request of this.firestore.user.requests">
+        <mat-card class="centered-card" >
+            <mat-card-content style="text-align: center;">
+                <mat-card-title class="center-content">{{request.cname}}</mat-card-title>
+            </mat-card-content>
+    
+            <mat-card-subtitle style="text-align: center;">
+                You've been invited to join this campaign. Ready up!
+            </mat-card-subtitle>
+    
+            <mat-card-actions style="display: flex; justify-content: center;">
+                <button mat-button (click)="accept_request(request)">Accept</button>
+                <button mat-button (click)="decline_request(request)">Decline</button>
+            </mat-card-actions>
+        </mat-card>
+    </ng-container>
+    }
+  </div>
+</div>
+
+<!-- <mat-grid-list cols="1" rowHeight="100px" gutterSize="5px">
     <mat-grid-tile> <h1>Notifications</h1></mat-grid-tile>
 </mat-grid-list>
 
@@ -16,4 +44,4 @@
             <button mat-button (click)="accept_request(request)">Accept</button>
             <button mat-button (click)="decline_request(request)">Decline</button>
         </mat-card-actions>
-    </mat-card>
+    </mat-card> -->

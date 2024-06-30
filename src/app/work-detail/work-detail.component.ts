@@ -1,5 +1,5 @@
 import { Component, Input, inject } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { FirestoreService } from '../shared/firestore.service';
 import { Campaign, Work } from '../shared/structure';
 import { ENTER, COMMA } from '@angular/cdk/keycodes';
@@ -12,11 +12,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { LinkingService } from '../shared/linking.service';
+import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 
 @Component({
   selector: 'app-work-detail',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, MatCardModule, MatButtonModule, MatInputModule, MatFormFieldModule, MatChipsModule, MatIconModule, MatDividerModule, MatSlideToggleModule],
+  imports: [RouterLink, MatCardModule, MatButtonModule, MatInputModule, MatFormFieldModule, MatChipsModule, MatIconModule, MatDividerModule, MatSlideToggleModule, CdkTextareaAutosize],
   templateUrl: './work-detail.component.html',
   styleUrl: './work-detail.component.scss'
 })
@@ -38,7 +39,7 @@ export class WorkDetailComponent {
   }
 
   get work(): Work {
-    return this.firestore.campaigns.get(this.c_id)?.works?.get(this.w_id) ?? {beholders: [], filterables: [], identifiers: [], info: '', name: '', supervisible: false}
+    return this.firestore.campaigns.get(this.c_id)?.works?.get(this.w_id) ?? {beholders: [], filterables: [], identifiers: [], info: '', name: '', supervisible: false};
   }
 
   async save() {
@@ -51,6 +52,14 @@ export class WorkDetailComponent {
 
   edit() {
     this.edit_mode = !this.edit_mode;
+  }
+
+  supervisible() {
+    this.work.supervisible = !this.work.supervisible;
+  }
+
+  in_beholders(uid: string): boolean {
+    return ( this.work.beholders.find( beh => { return (beh == uid); } ) != undefined);
   }
 
   update_name(name: string) {
@@ -90,19 +99,24 @@ export class WorkDetailComponent {
     }
   }
 
-  add_beholder(u_id: string) {
-    if (u_id) {
-      this.changes_made = true;
-      this.work.beholders.push(u_id);
-      this.work.beholders.sort();
+  toggle_beholder(u_id: string) {
+    if (this.work.beholders.find( beh => { return (beh == u_id); } )) {
+      this.remove_beholder(u_id);
+    }
+    else {
+      this.add_beholder(u_id);
     }
   }
 
+  add_beholder(u_id: string) {
+      this.changes_made = true;
+      this.work.beholders.push(u_id);
+      this.work.beholders.sort();
+  }
+
   remove_beholder(u_id: string) {
-    if (this.work.beholders.indexOf(u_id) != -1) {
       this.changes_made = true;
       this.work.beholders.splice( this.work.beholders.findIndex( i => {return i == u_id} ), 1);
-    }
   }
 
   add_identifier(ident: string) {

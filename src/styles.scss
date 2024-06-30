@@ -3,7 +3,7 @@
 // For more information: https://material.angular.io/guide/theming
 @use '@angular/material' as mat;
 // Plus imports for other components in your app.
-@use 'app/themes/dark-orange.scss' as dark-orange;
+@use 'app/themes/dungeon-yellow.scss' as dungeon-yellow;
 
 // Include the common styles for Angular Material. We include this here so that you only
 // have to load a single css file for Angular Material in your app.
@@ -26,7 +26,7 @@
 // Alternatively, you can import and @include the theme mixins for each component
 // that you are using.
 :root {
-  @include mat.all-component-themes(dark-orange.$dark-theme);
+  @include mat.all-component-themes(dungeon-yellow.$dark-theme);
 }
 
 // Comment out the line below if you want to use the pre-defined typography utility classes.
@@ -37,8 +37,21 @@
 // @include mat.color-variants-backwards-compatibility($dungeon-maestro-app-theme);
 /* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; }
-body { @extend .mat-app-background; margin: 0; font-family: 'Matura MT Script Capitals' }
+html, body { height: 100%;}
+body { 
+  @extend .mat-app-background; margin: 0;
+  background: #04040471 url('/assets/img/background-img-1.jpg');
+  height:90vh;
+  overflow: auto;
+}
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Matura MT Script Capitals'
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
 
 .center-content {
   display: flex;
@@ -55,4 +68,12 @@ body { @extend .mat-app-background; margin: 0; font-family: 'Matura MT Script Ca
   align-content: center;
   max-width: 350px;
   margin: 8px auto;
+}
+
+.input-box {
+  display: flex;
+  justify-self: center;
+  align-self: center;
+  max-width: fit-content;
+  margin: auto;
 }

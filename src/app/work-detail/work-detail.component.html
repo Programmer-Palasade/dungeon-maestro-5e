@@ -17,6 +17,7 @@
         <mat-divider></mat-divider>
 
         <mat-card-content class="center-content">
+
             <span class="center-content">Filterables</span>
             <mat-chip-set class="center-content">
                 @for (filterable of this.work.filterables; track filterable) {
@@ -25,27 +26,32 @@
                 <button mat-icon-button><mat-icon>add</mat-icon></button>
             </mat-chip-set>
 
-            <mat-divider></mat-divider>
-
             <span class="center-content">Beholders</span>
-            <mat-chip-set class="center-content">
-                @for (u_id of this.work.beholders; track u_id) {
-                    <mat-chip>{{this.firestore.get_username(u_id)}}</mat-chip>
+            <mat-chip-listbox multiple>
+                @for (user of this.campaign.users; track user) {
+                    <mat-chip-option [selected]="this.in_beholders(user)" (selectionChange)="this.toggle_beholder(user)">{{this.firestore.get_username(user)}}</mat-chip-option>
                 }
-                <button mat-icon-button><mat-icon>add</mat-icon></button>
-            </mat-chip-set>
+            </mat-chip-listbox>
+
+            <div></div>
+
+            <span class="center-content"><mat-slide-toggle (change)="this.supervisible()">Super-Visible</mat-slide-toggle></span>
 
             <mat-divider></mat-divider>
 
-            <mat-form-field appearance="outline" color="primary">
-                <mat-label>Work Info</mat-label>
-                <input #infoInput matInput value="{{this.work.info}}" (blur)="update_info(infoInput.value)">
-            </mat-form-field>
-        
+            <div>
+                <mat-form-field appearance="outline" color="primary">
+                    <mat-label>Work Info</mat-label>
+                    <textarea matNativeControl cdkTextareaAutosize #infoInput style="max-width: fit-content; max-height: fit-content;" [value]="this.work.info" (blur)="update_info(infoInput.value)"></textarea>
+                </mat-form-field>
+            </div>
+            
             <span class="center-content">
                 <button mat-fab (click)="this.save()"><mat-icon>save</mat-icon></button>
             </span>
+
         </mat-card-content>
+
     </mat-card>
 }
 
@@ -67,13 +73,6 @@
             </mat-chip-set>
 
             <mat-divider></mat-divider>
-
-            <span class="center-content">Beholders</span>
-            <mat-chip-set class="center-content">
-                @for (u_id of this.work.beholders; track u_id) {
-                    <mat-chip>{{this.campaign.players.get(u_id)?.name}}</mat-chip>
-                }
-            </mat-chip-set>
 
             <mat-divider></mat-divider>
             <div class="center-content">

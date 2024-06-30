@@ -76,4 +76,12 @@ export class CampaignDetailComponent {
     alert("A request to join your campaign has been sent to ".concat(email))
   }
 
+  async delete_work(work_id: string): Promise<void> {
+    return this.firestore.delete_work(this.c_id, work_id);
+  }
+
+  async remove_user(user_id: string): Promise<void> {
+    return this.firestore.remove_user(this.c_id, user_id);
+  }
+
 }
