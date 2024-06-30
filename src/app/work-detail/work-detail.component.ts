@@ -11,12 +11,14 @@ import { MatChipEditedEvent, MatChipInputEvent, MatChipsModule } from '@angular/
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSelectModule } from '@angular/material/select';
 import { LinkingService } from '../shared/linking.service';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-work-detail',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, MatCardModule, MatButtonModule, MatInputModule, MatFormFieldModule, MatChipsModule, MatIconModule, MatDividerModule, MatSlideToggleModule],
+  imports: [RouterLink, RouterLinkActive, MatCardModule, MatButtonModule, MatInputModule, MatFormFieldModule, MatChipsModule, MatIconModule, MatDividerModule, MatSlideToggleModule, MatSelectModule],
   templateUrl: './work-detail.component.html',
   styleUrl: './work-detail.component.scss'
 })
@@ -38,7 +40,15 @@ export class WorkDetailComponent {
   }
 
   get work(): Work {
-    return this.firestore.campaigns.get(this.c_id)?.works?.get(this.w_id) ?? {beholders: [], filterables: [], identifiers: [], info: '', name: '', supervisible: false}
+    return this.firestore.campaigns.get(this.c_id)?.works?.get(this.w_id) ?? {beholders: [], filterables: [], identifiers: [], info: '', name: '', supervisible: false};
+  }
+
+  get users(): Map<string, string> {
+    let users: Map<string, string> = new Map();
+    for (let u_id in this.campaign.users) {
+      users.set( u_id, this.firestore.get_username(u_id) );
+    }
+    return users;
   }
 
   async save() {
@@ -51,6 +61,14 @@ export class WorkDetailComponent {
 
   edit() {
     this.edit_mode = !this.edit_mode;
+  }
+
+  supervisible() {
+    this.work.supervisible = !this.work.supervisible;
+  }
+
+  on_beholders(uid: string): boolean {
+    return ( this.work.beholders.find( beh => { return (beh == uid); } ) == undefined);
   }
 
   update_name(name: string) {
@@ -87,6 +105,15 @@ export class WorkDetailComponent {
     if (this.work.filterables.indexOf(filter) != -1) {
       this.changes_made = true;
       this.work.filterables.splice( this.work.filterables.findIndex( i => { return i == filter }), 1);
+    }
+  }
+
+  toggle_beholder(u_id: string) {
+    if (this.work.beholders.find( beh => { return (beh == u_id); } )) {
+      this.remove_beholder(u_id);
+    }
+    else {
+      this.add_beholder(u_id);
     }
   }
 

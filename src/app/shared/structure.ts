@@ -31,6 +31,7 @@ export class Campaign {
         this.name = c.name;
         this.owner = c.owner;
         this.info = c.info;
+        this.users = c.users;
         this.unsub();
     }
 

@@ -103,7 +103,7 @@ export class FirestoreService implements OnDestroy {
 
   upload_work_changes(c_id: string, w_id: string) {
     let w = this.campaigns.get(c_id)?.works.get(w_id) ?? { beholders: [], filterables: [], identifiers: [], info: 'Description of some sort.', name: 'New Work', supervisible: false };
-    setDoc( doc(this.firestore, 'campaigns/'.concat(c_id, '/works', w_id)), w );
+    setDoc( doc(this.firestore, 'campaigns/'.concat(c_id, '/works/', w_id)), w );
   }
 
   async delete_work(c_id: string, w_id: string): Promise<void> {
@@ -111,7 +111,6 @@ export class FirestoreService implements OnDestroy {
   }
 
   get_username(u_id: string): string {
-    console.log(this.associated_users);
     return this.associated_users.get(u_id)?.name ?? 'Unknown Adventurer';
   }
 
