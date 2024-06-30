@@ -1,0 +1,42 @@
+  mat-card{
+    border: 2px ridge #c2ab32;
+    background-color: #00000090;
+  }
+  
+  mat-card-title {
+    font-family:'Matura MT Script Capitals';
+    text-align: center;
+  }
+  
+  mat-card-subtitle {
+    font-family:'Times New Roman', Times, serif;
+  }
+
+  .no-requests {
+    font-weight: 100;
+    font-family:Verdana, Geneva, Tahoma, sans-serif
+  }
+
+  .notifications-container {
+    position: relative;
+    padding: 20px;
+    border: 2px ridge #FFFFFF;
+    border-radius: 10px;
+    text-align: center; /* Center the text inside the container */
+    width: 65%;
+    margin: auto;
+    margin-top: 20px;
+    background-color: #0000003d
+  }
+  
+  .notifications-title {
+    position: relative;
+    display: inline-block;
+    padding: 0 10px;
+    font-family: 'Matura MT Script Capitals', cursive; /* Apply medieval font */
+    color: #FFFFFF; /* Skyrim-like grey color for the text */
+    z-index: 1;
+    background-color: transparent; /* Ensure no background color */
+  }
+
+  

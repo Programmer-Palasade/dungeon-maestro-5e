@@ -1,8 +1,26 @@
-@for ( entry of this.firestore.campaigns | keyvalue; track entry.key) {
-    <mat-card class="centered-card">
+@for ( entry of this.firestore.campaigns | keyvalue; track entry.key ) {
+    <mat-card class="centered-card" (click)="this.router.navigate(['/campaigns/'.concat(entry.key)])">
         <mat-card-content>
-            <mat-card-title class="center-content"><button mat-button (click)="this.router.navigate(['/campaigns/'.concat(entry.key)])">{{entry.value.name}}</button></mat-card-title>
-            <mat-card-subtitle class="center-content"> {{ this.firestore.get_username(entry.value.owner) }} </mat-card-subtitle>
+            <mat-card-title class="center-content">
+                <h4>{{entry.value.name}}</h4>
+                <!-- @if (this.firestore.user.uid == entry.value.owner) {
+                    <button mat-icon-button><mat-icon>delete</mat-icon></button>
+                }
+                @else {
+                    <button mat-icon-button><mat-icon>logout</mat-icon></button>
+                } -->
+            </mat-card-title>
+            <mat-card-subtitle class="center-content"> 
+                DM: 
+                @if(this.firestore.user.uid == entry.value.owner){
+                    You
+                }
+                @else {
+                    {{ this.firestore.get_username(entry.value.owner) }} 
+                }
+                
+            </mat-card-subtitle>
         </mat-card-content>
     </mat-card>
 }
+<div class="center-content"><button mat-fab (click)="this.new_campaign()"><mat-icon>add</mat-icon></button></div>

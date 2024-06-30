@@ -1,23 +1,92 @@
-<mat-card class="centered-card">
-    <mat-card-header class="center-content">
-        <mat-card-title>{{this.work.name}}</mat-card-title>
-    </mat-card-header>
-    <mat-divider></mat-divider>
-    <mat-card-content class="center-content">
-        <span class="center-content">Filterables</span>
-        <mat-chip-set class="center-content">
-            @for (filterable of this.work.filterables; track filterable) {
-                <mat-chip>{{filterable}}</mat-chip>
-            }
-        </mat-chip-set>
+@if (!this.firestore.campaigns.has(this.c_id) || !this.firestore.campaigns.get(this.c_id)?.works?.has(this.w_id)) { {{this.router.navigate(['/home'])}} }
+
+@if (this.firestore.user.uid == this.campaign.owner) {
+    <span class="center-content"><mat-slide-toggle (change)="this.edit()">Edit Mode</mat-slide-toggle></span>
+}
+
+@if (this.edit_mode) {
+    <mat-card class="centered-card">
+
+        <mat-card-header class="center-content">
+            <mat-form-field appearance="outline" color="primary">
+                <mat-label>Work Name</mat-label>
+                <input #nameInput matInput value="{{this.work.name}}" (blur)="update_name(nameInput.value)">
+            </mat-form-field>
+        </mat-card-header>
+
         <mat-divider></mat-divider>
-        <span class="center-content">Beholders</span>
-        <mat-chip-set class="center-content">
-            @for (u_id of this.work.beholders; track u_id) {
-                <mat-chip>{{this.firestore.get_username(u_id)}}</mat-chip>
-            }
-        </mat-chip-set>
+
+        <mat-card-content class="center-content">
+
+            <span class="center-content">Filterables</span>
+            <mat-chip-set class="center-content">
+                @for (filterable of this.work.filterables; track filterable) {
+                    <mat-chip>{{filterable}}</mat-chip>
+                }
+                <button mat-icon-button><mat-icon>add</mat-icon></button>
+            </mat-chip-set>
+
+            <span class="center-content">Beholders</span>
+            <mat-chip-listbox multiple>
+                @for (user of this.campaign.users; track user) {
+                    <mat-chip-option [selected]="this.in_beholders(user)" (selectionChange)="this.toggle_beholder(user)">{{this.firestore.get_username(user)}}</mat-chip-option>
+                }
+            </mat-chip-listbox>
+
+            <div></div>
+
+            <span class="center-content"><mat-slide-toggle (change)="this.supervisible()">Super-Visible</mat-slide-toggle></span>
+
+            <mat-divider></mat-divider>
+
+            <div>
+                <mat-form-field appearance="outline" color="primary">
+                    <mat-label>Work Info</mat-label>
+                    <textarea matNativeControl cdkTextareaAutosize #infoInput style="max-width: fit-content; max-height: fit-content;" [value]="this.work.info" (blur)="update_info(infoInput.value)"></textarea>
+                </mat-form-field>
+            </div>
+            
+            <span class="center-content">
+                <button mat-fab (click)="this.save()"><mat-icon>save</mat-icon></button>
+            </span>
+
+        </mat-card-content>
+
+    </mat-card>
+}
+
+@else {
+    <mat-card class="centered-card">
+
+        <mat-card-header class="center-content">
+            <mat-card-title>{{this.work.name}}</mat-card-title>
+        </mat-card-header>
+
         <mat-divider></mat-divider>
-        <p>{{this.work.info}}</p>
-    </mat-card-content>
-</mat-card>
+
+        <mat-card-content class="center-content">
+            <span class="center-content">Filterables</span>
+            <mat-chip-set class="center-content">
+                @for (filterable of this.work.filterables; track filterable) {
+                    <mat-chip>{{filterable}}</mat-chip>
+                }
+            </mat-chip-set>
+
+            <mat-divider></mat-divider>
+
+            <mat-divider></mat-divider>
+            <div class="center-content">
+                <p>
+                    @for (seg of this.linker.generate_links(this.campaign.identifiers, this.work.info); track seg.ind) {
+                        @if (seg.link) {
+                            <a [routerLink]="seg.link">{{seg.str}}</a>
+                        }
+                        @else {
+                            {{seg.str}}
+                        }
+                    }
+                </p>
+            </div>
+        </mat-card-content>
+    </mat-card>
+}
