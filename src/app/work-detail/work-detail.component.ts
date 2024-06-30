@@ -56,6 +56,7 @@ export class WorkDetailComponent {
 
   supervisible() {
     this.work.supervisible = !this.work.supervisible;
+    this.changes_made = true;
   }
 
   in_beholders(uid: string): boolean {

@@ -23,8 +23,7 @@ export class ListViewerComponent {
   constructor() {  }
 
   public async new_campaign() {
-    var new_c = new Campaign('', new Map())
-    const new_cid = await this.firestore.upload_new_campaign(new_c);
+    const new_cid = await this.firestore.upload_new_campaign();
     // this.router.navigate(['/campaigns/'.concat(new_cid)]);
   }
 

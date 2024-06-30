@@ -80,8 +80,9 @@ export class FirestoreService implements OnDestroy {
     });
   }
 
-  async upload_new_campaign(c: Campaign): Promise<string> {
-    let new_c = { name: c.name, owner: c.owner, users: c.users };
+  async upload_new_campaign(): Promise<string> {
+    console.log('new campaign created, and owner set as', this.user.uid??'default');
+    let new_c = { name: "New Adventure", owner: this.user.uid??'An Unknown Dungeon Architect', info: "A (mysterious/amazing/dramatic/heartwarming/comical/depressing) (adventure/quest/dungeon crawl/legend/business? venture)", users: [] }
 
     return addDoc(this.campaigns_col, new_c).then( new_ref => { return new_ref.id; } );
   }
@@ -179,10 +180,10 @@ export class FirestoreService implements OnDestroy {
   }
 
   async add_new_user(campaignId: string, userId: string): Promise<void> {
-    let c_doc = await getDoc( doc(this.firestore, 'campaigns', campaignId) );
-    if (c_doc.exists()) {
-      updateDoc( doc(this.firestore, 'campaigns', campaignId), c_doc.data()['users'].append(userId) );
+    const data = {
+      users: arrayUnion(userId)
     }
+    updateDoc( doc(this.campaigns_col, campaignId), data );
   }
 
   async create_new_player_character(campaignId: string, userId: string): Promise<void> {
