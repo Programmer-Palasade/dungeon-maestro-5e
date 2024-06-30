@@ -80,8 +80,8 @@ export class FirestoreService implements OnDestroy {
     });
   }
 
-  async upload_new_campaign(c: Campaign): Promise<string> {
-    let new_c = { name: c.name, owner: c.owner, users: c.users };
+  async upload_new_campaign(): Promise<string> {
+    let new_c = { name: "New Adventure", owner: this.user.uid, info: "A (mysterious/amazing/dramatic/heartwarming/comical/depressing) (adventure/quest/dungeon crawl/legend/business? venture)", users: [] }
 
     return addDoc(this.campaigns_col, new_c).then( new_ref => { return new_ref.id; } );
   }
