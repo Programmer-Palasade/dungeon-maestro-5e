@@ -59,8 +59,8 @@ export class WorkDetailComponent {
     this.work.supervisible = !this.work.supervisible;
   }
 
-  on_beholders(uid: string): boolean {
-    return ( this.work.beholders.find( beh => { return (beh == uid); } ) == undefined);
+  in_beholders(uid: string): boolean {
+    return ( this.work.beholders.find( beh => { return (beh == uid); } ) != undefined);
   }
 
   update_name(name: string) {
@@ -107,21 +107,18 @@ export class WorkDetailComponent {
     else {
       this.add_beholder(u_id);
     }
+    console.log(this.work.beholders, this.campaign.users);
   }
 
   add_beholder(u_id: string) {
-    if (u_id) {
       this.changes_made = true;
       this.work.beholders.push(u_id);
       this.work.beholders.sort();
-    }
   }
 
   remove_beholder(u_id: string) {
-    if (this.work.beholders.indexOf(u_id) != -1) {
       this.changes_made = true;
       this.work.beholders.splice( this.work.beholders.findIndex( i => {return i == u_id} ), 1);
-    }
   }
 
   add_identifier(ident: string) {
