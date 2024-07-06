@@ -64,25 +64,24 @@
 
         <mat-divider></mat-divider>
 
+        <span class="center-content">Filterables</span>
+        <mat-chip-set class="center-content">
+            @for (filterable of this.work.filterables; track filterable) {
+                <mat-chip>{{filterable}}</mat-chip>
+            }
+        </mat-chip-set>
+
+        <mat-divider></mat-divider>
+
         <mat-card-content class="center-content">
-            <span class="center-content">Filterables</span>
-            <mat-chip-set class="center-content">
-                @for (filterable of this.work.filterables; track filterable) {
-                    <mat-chip>{{filterable}}</mat-chip>
-                }
-            </mat-chip-set>
-
-            <mat-divider></mat-divider>
-
-            <mat-divider></mat-divider>
             <div class="center-content">
                 <p>
                     @for (seg of this.linker.generate_links(this.campaign.identifiers, this.work.info); track seg.ind) {
                         @if (seg.link) {
-                            <a [routerLink]="seg.link">{{seg.str}}</a>
+                            <a mat-button [routerLink]="seg.link">{{seg.str}}</a>
                         }
                         @else {
-                            {{seg.str}}
+                            <a>{{seg.str}}</a>
                         }
                     }
                 </p>
