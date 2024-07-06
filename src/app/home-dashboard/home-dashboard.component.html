@@ -1,0 +1,11 @@
+<div class="grid-container">
+  <mat-grid-list cols="2" rowHeight="250px">
+    @for (card of cards | async; track card) {
+      <mat-grid-tile [colspan]="card.cols" [rowspan]="card.rows">
+          <mat-card [class]="card.class" (click)="this.router.navigate([card.click])">
+            <h1>{{card.title}}</h1>
+          </mat-card>
+        </mat-grid-tile>
+    }
+  </mat-grid-list>
+</div>
