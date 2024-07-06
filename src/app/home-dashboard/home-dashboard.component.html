@@ -1,16 +1,8 @@
 <div class="grid-container">
-  <h1 class="mat-h1">Dashboard</h1>
-  <mat-grid-list cols="1" rowHeight="250px">
-    <mat-grid-tile> 
-      <mat-card class="dashboard-card">
-        <h1>Campaigns</h1>
-      </mat-card>
-    </mat-grid-tile>
-</mat-grid-list>
   <mat-grid-list cols="2" rowHeight="250px">
     @for (card of cards | async; track card) {
       <mat-grid-tile [colspan]="card.cols" [rowspan]="card.rows">
-          <mat-card class="dashboard-card" [style]="card.fontstyle">
+          <mat-card [class]="card.class" (click)="this.router.navigate([card.click])">
             <h1>{{card.title}}</h1>
           </mat-card>
         </mat-grid-tile>

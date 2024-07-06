@@ -2,7 +2,8 @@
   margin: 20px;
 }
 
-.dashboard-card {
+//Desktop Card Classes
+.dashboard-campaign-card {
   position: absolute;
   top: 15px;
   left: 15px;
@@ -11,7 +12,111 @@
   text-align: center;
   align-items: center;
   margin: auto;
+  font-size: 1vw;
+  background:linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("../../assets/img/dm5e-campaign-thumbnail.png");
+  background-size: cover;
 }
+
+.dashboard-character-card {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  right: 15px;
+  bottom: 15px;
+  text-align: center;
+  align-items: center;
+  margin: auto;
+  font-size: 1vw;
+  background:linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("../../assets/img/dm5e-character-disabled-thumbnail.png");
+  background-size: cover;
+}
+
+.dashboard-notification-card {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  right: 15px;
+  bottom: 15px;
+  text-align: center;
+  align-items: center;
+  margin: auto;
+  font-size: 1vw;
+  background:linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("../../assets/img/dm5e-notification-thumbnail.png");
+  background-size: cover;
+}
+
+.dashboard-profile-card {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  right: 15px;
+  bottom: 15px;
+  text-align: center;
+  align-items: center;
+  margin: auto;
+  font-size: 1vw;
+  background:linear-gradient(0deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("../../assets/img/dm5e-profile-thumbnail.png");
+  background-size: cover;
+}
+
+//Mobile Card Classes
+.dashboard-campaign-card-m {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  right: 15px;
+  bottom: 15px;
+  text-align: center;
+  align-items: center;
+  margin: auto;
+  font-size: 2.5vw;
+  background:linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("../../assets/img/dm5e-campaign-thumbnail.png");
+  background-size: cover;
+}
+
+.dashboard-character-card-m {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  right: 15px;
+  bottom: 15px;
+  text-align: center;
+  align-items: center;
+  margin: auto;
+  font-size: 2.5vw;
+  background:linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("../../assets/img/dm5e-character-disabled-thumbnail.png");
+  background-size: cover;
+}
+
+.dashboard-notification-card-m {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  right: 15px;
+  bottom: 15px;
+  text-align: center;
+  align-items: center;
+  margin: auto;
+  font-size: 2.5vw;
+  background:linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("../../assets/img/dm5e-notification-thumbnail.png");
+  background-size: cover;
+}
+
+.dashboard-profile-card-m {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  right: 15px;
+  bottom: 15px;
+  text-align: center;
+  align-items: center;
+  margin: auto;
+  font-size: 2.5vw;
+  background:linear-gradient(0deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("../../assets/img/dm5e-profile-thumbnail.png");
+  background-size: cover;
+}
+////////////////////////////////////////////
+///////////////////////////////////////////
 
 .more-button {
   position: absolute;
@@ -31,7 +136,7 @@ mat-card{
 
 mat-card:hover{
   border: 2px ridge #312b0d;
-  color: #c2ab32;
+  color: rgb(194, 171, 50);
 }
 
 mat-card-title {

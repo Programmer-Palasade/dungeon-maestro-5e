@@ -5,6 +5,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatButtonModule } from '@angular/material/button';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { HomeDashboardComponent } from "../home-dashboard/home-dashboard.component";
+import { FirestoreService } from '../shared/firestore.service';
 
 @Component({
     selector: 'app-landing-page',
@@ -16,6 +17,7 @@ import { HomeDashboardComponent } from "../home-dashboard/home-dashboard.compone
 export class LandingPageComponent {
 
   public router = inject(Router);
+  firestore = inject(FirestoreService);
 
 
   constructor () {
