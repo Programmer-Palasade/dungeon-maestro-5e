@@ -12,11 +12,11 @@
     
                     
                     <div>
-                        <button mat-button (click)="this.router.navigate(['/user/'.concat(this.firestore.user.uid!)])">Profile</button>
+                        <button mat-button (click)="this.router.navigate(['/user/'.concat(this.firestore.user.uid!)])" (click)="sidenav.toggle()">Profile</button>
                     </div>
                     
                     <div>
-                        <button mat-button (click)="this.router.navigate(['notifications'])">
+                        <button mat-button (click)="this.router.navigate(['notifications'])" (click)="sidenav.toggle()">
                             <span matBadgeSize="small" matBadgePosition="before" [matBadgeHidden]="this.firestore.user.requests.length == 0" matBadge={{this.firestore.user.requests.length}}>
                                 @if (this.firestore.user.requests.length > 0) {&nbsp; Notifications}
                                 @else {Notifications}

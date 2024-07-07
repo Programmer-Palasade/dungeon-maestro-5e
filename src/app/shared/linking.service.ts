@@ -17,8 +17,8 @@ export class LinkingService {
     var output: LinkedStringSegment[] = [];
     let str = seg.str;
     let j = 0;
-    while (j < str.length && str.includes(keyword, j)) {
-      let i = str.indexOf(keyword, j)
+    while (j < str.length && str.toLocaleLowerCase().includes(keyword.toLocaleLowerCase(), j)) {
+      let i = str.toLocaleLowerCase().indexOf(keyword.toLocaleLowerCase(), j)
 
       output.push({
         ind: j + seg.ind,
