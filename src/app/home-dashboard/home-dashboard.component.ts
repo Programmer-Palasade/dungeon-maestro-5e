@@ -9,6 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { User } from '../shared/structure';
 import { Router } from '@angular/router';
+import { FirestoreService } from '../shared/firestore.service';
 
 @Component({
   selector: 'app-home-dashboard',
@@ -27,6 +28,7 @@ import { Router } from '@angular/router';
 export class HomeDashboardComponent {
   private breakpointObserver = inject(BreakpointObserver);
   public router = inject(Router);
+  public firestore = inject(FirestoreService);
 
   @Input({required: true}) u_id = "";
 
@@ -38,7 +40,7 @@ export class HomeDashboardComponent {
         // Mobile View
         return [
           { title: 'Campaigns', cols: 2, rows: 1, class: "dashboard-campaign-card-m", click: '/campaigns' },
-          { title: 'Characters', cols: 2, rows: 1, class: "dashboard-character-card-m", click: '/home' },
+          { title: '', cols: 2, rows: 1, class: "inactive-card", click: '/home' },
           { title: 'Notifications', cols: 1, rows: 1, class: "dashboard-notification-card-m", click: '/notifications' },
           { title: 'Profile', cols: 1, rows: 1, class: "dashboard-profile-card-m", click: '/user/'.concat(this.u_id)}
         ];
@@ -47,7 +49,7 @@ export class HomeDashboardComponent {
       // Desktop View
       return [
         { title: 'Campaigns', cols: 2, rows: 1, class: "dashboard-campaign-card", click: '/campaigns' },
-        { title: 'Characters', cols: 1, rows: 2, class: "dashboard-character-card", click: '/home'},
+        { title: '', cols: 1, rows: 2, class: "inactive-card", click: '/home'},
         { title: 'Notifications', cols: 1, rows: 1, class: "dashboard-notification-card", click: '/notifications' },
         { title: 'Profile', cols: 1, rows: 1, class: "dashboard-profile-card", click: '/user/'.concat(this.u_id) }
       ];

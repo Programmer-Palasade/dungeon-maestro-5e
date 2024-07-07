@@ -2,6 +2,34 @@
   margin: 20px;
 }
 
+.notifications-count-box {
+  max-width: 50%;
+  width: 20vw;
+  margin: auto;
+  border-radius: 10px;
+  background-color: #000000d5;
+  padding: 2px;
+  font-size: 10vh;
+}
+
+//Inactive Card Classes
+.inactive-card{
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  right: 15px;
+  bottom: 15px;
+  text-align: center;
+  align-items: center;
+  margin: auto;
+  background:linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("../../assets/img/dm5e-character-disabled-thumbnail.png");
+  background-size: cover; 
+  border: 2px solid #312b0d;
+  color: #3d3d3d;
+  cursor: default;
+}
+
+
 //Desktop Card Classes
 .dashboard-campaign-card {
   position: absolute;
@@ -135,7 +163,7 @@ mat-card{
 }
 
 mat-card:hover{
-  border: 2px ridge #312b0d;
+  border: 2px solid #312b0d;
   color: rgb(194, 171, 50);
 }
 
