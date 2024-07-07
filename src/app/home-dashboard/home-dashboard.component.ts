@@ -38,7 +38,7 @@ export class HomeDashboardComponent {
         // Mobile View
         return [
           { title: 'Campaigns', cols: 2, rows: 1, class: "dashboard-campaign-card-m", click: '/campaigns' },
-          { title: 'Characters', cols: 2, rows: 1, class: "dashboard-character-card-m", click: '/home' },
+          { title: '', cols: 2, rows: 1, class: "inactive-card", click: '/home' },
           { title: 'Notifications', cols: 1, rows: 1, class: "dashboard-notification-card-m", click: '/notifications' },
           { title: 'Profile', cols: 1, rows: 1, class: "dashboard-profile-card-m", click: '/user/'.concat(this.u_id)}
         ];
@@ -47,7 +47,7 @@ export class HomeDashboardComponent {
       // Desktop View
       return [
         { title: 'Campaigns', cols: 2, rows: 1, class: "dashboard-campaign-card", click: '/campaigns' },
-        { title: 'Characters', cols: 1, rows: 2, class: "dashboard-character-card", click: '/home'},
+        { title: '', cols: 1, rows: 2, class: "inactive-card", click: '/home'},
         { title: 'Notifications', cols: 1, rows: 1, class: "dashboard-notification-card", click: '/notifications' },
         { title: 'Profile', cols: 1, rows: 1, class: "dashboard-profile-card", click: '/user/'.concat(this.u_id) }
       ];
