@@ -3,7 +3,15 @@
     @for (card of cards | async; track card) {
       <mat-grid-tile [colspan]="card.cols" [rowspan]="card.rows">
           <mat-card [class]="card.class" (click)="this.router.navigate([card.click])">
+            
             <h1>{{card.title}}</h1>
+            @if(card.title === "Notifications"){
+              <mat-card-content>
+                <div class="notifications-count-box">
+                  {{this.firestore.user.requests.length }}
+                </div>
+              </mat-card-content>
+            }
           </mat-card>
         </mat-grid-tile>
     }

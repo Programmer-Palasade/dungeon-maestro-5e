@@ -9,6 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { User } from '../shared/structure';
 import { Router } from '@angular/router';
+import { FirestoreService } from '../shared/firestore.service';
 
 @Component({
   selector: 'app-home-dashboard',
@@ -27,6 +28,7 @@ import { Router } from '@angular/router';
 export class HomeDashboardComponent {
   private breakpointObserver = inject(BreakpointObserver);
   public router = inject(Router);
+  public firestore = inject(FirestoreService);
 
   @Input({required: true}) u_id = "";
 
