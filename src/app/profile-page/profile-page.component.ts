@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, inject } from '@angular/core';
 import { FirestoreService } from '../shared/firestore.service';
-import { CommonModule } from '@angular/common';
+
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -16,7 +16,7 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-profile-page',
   standalone: true,
-  imports: [MatButtonModule, CommonModule, FormsModule, MatButtonModule, MatCardModule, MatInputModule, MatFormFieldModule, MatIconModule, MatChipsModule, MatDividerModule, MatSlideToggleModule],
+  imports: [MatButtonModule, FormsModule, MatButtonModule, MatCardModule, MatInputModule, MatFormFieldModule, MatIconModule, MatChipsModule, MatDividerModule, MatSlideToggleModule],
   templateUrl: './profile-page.component.html',
   styleUrl: './profile-page.component.scss'
 })
