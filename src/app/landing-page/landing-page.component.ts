@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -12,7 +12,7 @@ import { FirestoreService } from '../shared/firestore.service';
     standalone: true,
     templateUrl: './landing-page.component.html',
     styleUrl: './landing-page.component.scss',
-    imports: [CommonModule, MatSidenavModule, MatButtonModule, MatGridListModule, HomeDashboardComponent]
+    imports: [MatSidenavModule, MatButtonModule, MatGridListModule, HomeDashboardComponent]
 })
 export class LandingPageComponent {
 
