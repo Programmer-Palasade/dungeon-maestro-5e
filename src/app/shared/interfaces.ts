@@ -11,7 +11,7 @@ export interface Campaign {
     users: string[],
 }
 
-export interface User {
+export interface PublicUser {
     uid: string | undefined,
     name: string,
     email: string,
