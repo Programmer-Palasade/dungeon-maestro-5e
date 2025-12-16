@@ -1,9 +1,11 @@
-import { Injectable, OnDestroy, inject } from '@angular/core';
-import { Firestore, collection, doc, query, or, where, onSnapshot, getDoc, setDoc, addDoc, getDocs, updateDoc, arrayUnion, arrayRemove, DocumentReference, deleteDoc } from '@angular/fire/firestore';
-import { Subscription } from 'rxjs';
+import { Injectable, OnDestroy, inject, Signal, computed, Resource, resource, ResourceLoaderParams, ResourceStreamItem } from '@angular/core';
+import { Firestore, collection, doc, query, or, where, onSnapshot, getDoc, setDoc, addDoc, getDocs, updateDoc, arrayUnion, arrayRemove, DocumentReference, deleteDoc, docData, DocumentData } from '@angular/fire/firestore';
+import { Observable, Subscription } from 'rxjs';
 import { AuthService } from './auth.service';
-import { Campaign, CampaignRequest, User, Work } from './structure';
-import { Unsubscribe } from '@angular/fire/auth';
+import { PublicUser } from './interfaces';
+import { Campaign, CampaignRequest, Work } from './structure';
+import { Unsubscribe, User, user } from '@angular/fire/auth';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Injectable({
   providedIn: 'root'
@@ -11,17 +13,45 @@ import { Unsubscribe } from '@angular/fire/auth';
 export class FirestoreService implements OnDestroy {
   private firestore = inject(Firestore);
   private auth = inject(AuthService);
-  private user_sub: Subscription;
 
   private readonly campaigns_col = collection(this.firestore, 'campaigns');
   private q_user: Unsubscribe|undefined;
   private q_campaign: Unsubscribe|undefined;
 
-  public user: User = {uid:"", name:"", email:"", requests:[],};
-  private associated_users: Map<string, User> = new Map();
+  public user: Signal<PublicUser>;
+  private user_doc: Signal<DocumentData>;
+  private associated_users: Map<string, PublicUser> = new Map();
   
   public campaigns: Map<string, Campaign> = new Map();
 
+  constructor() {
+    this.user_doc = computed( () => toSignal(docData( doc(this.firestore, 'users/'.concat(this.auth.user()?.uid??"null")) )) );
+    this.user = computed( () => {
+      if (this.auth.logged_in()) {
+        var user_data = this.user_doc() as PublicUser;
+        user_data.uid = this.auth.user()?.uid;
+        return user_data;
+      }
+      return {uid: "null", name: "An Unknown Adventurer", email: "", requests: []}
+    });
+
+  }
+
+  ngOnDestroy(): void {
+  }
+
+  public docObservable(path: string) {
+    return docData(doc(this.firestore, path));
+  }
+
+  async updateUserData(upd: PublicUser) {
+    if (this.auth.logged_in()) {
+      setDoc(doc(this.firestore, 'users/'.concat(this.user().uid??"err")),
+        {name: upd.name, email: upd.email, requests: upd.requests});
+    }
+  }
+
+  /**
   constructor() {
     this.user_sub = this.auth.user.subscribe(u => {
       if (u == null) {
@@ -216,4 +246,5 @@ export class FirestoreService implements OnDestroy {
   update_user(uid: string) {
     setDoc( doc(this.firestore, 'users', uid), this.user);
   }
+  */
 }

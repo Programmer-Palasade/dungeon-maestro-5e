@@ -67,15 +67,15 @@ export class Campaign {
                         }
                     }
                     p.update( change.doc.data() as Player );
-                    p.listen( collection(firestore, 'campaigns', this.doc_id, 'players', change.doc.id, 'characters'), service.user, this.work_logic );
+                    p.listen( collection(firestore, 'campaigns', this.doc_id, 'players', change.doc.id, 'characters'), service.user(), this.work_logic );
                     this.players.set(change.doc.id, p);
                 }
             });
         });
 
-        if (service.user.uid == this.owner) { this.admin = true; }
+        if (service.user().uid == this.owner) { this.admin = true; }
         let q_works = query( collection(firestore, 'campaigns', this.doc_id, 'works') );
-        if (!this.admin) { q_works = query( q_works, or( where('supervisible', '==', true), where('beholders', 'array-contains', service.user.uid) ) ); }
+        if (!this.admin) { q_works = query( q_works, or( where('supervisible', '==', true), where('beholders', 'array-contains', service.user().uid) ) ); }
         this.unsub_works = onSnapshot( q_works, ss => {
             ss.docChanges().forEach( change => {
                 this.work_logic(change);

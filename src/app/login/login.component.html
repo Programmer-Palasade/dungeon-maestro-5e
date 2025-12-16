@@ -1,4 +1,4 @@
-@if (!this.auth.logged_in) {
+@if (!this.auth.logged_in()) {
     <main class="login-page">
         <img class="primary-logo">
     @if (this.onLogin && !this.onPasswordReset) {

@@ -1,7 +1,10 @@
-import { Injectable, OnDestroy, inject } from '@angular/core';
+import { Injectable, OnDestroy, Signal, signal, computed, inject, Resource, resource, ResourceRef } from '@angular/core';
 import { EMPTY, Observable, Subscription } from 'rxjs';
+import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { Auth, User, user, signInWithPopup, GoogleAuthProvider, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, confirmPasswordReset } from '@angular/fire/auth';
 import { Router } from '@angular/router';
+import { FirestoreService } from './firestore.service';
+import { PublicUser } from './interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -9,26 +12,24 @@ import { Router } from '@angular/router';
 export class AuthService implements OnDestroy {
 
   private auth = inject(Auth);
+  private firestore = inject(FirestoreService);
   private router = inject(Router);
   private google_provider = new GoogleAuthProvider();
 
-  public readonly user: Observable<User | null> = EMPTY;
+  //public readonly userResource: ResourceRef<PublicUser | undefined>
+  public readonly user: Signal<User | null | undefined>;
   private readonly userDisposable: Subscription|undefined;
 
-  public logged_in = false;
+  public logged_in: Signal<boolean>;
 
   constructor() {
+    
     this.google_provider.addScope('email');
     this.google_provider.addScope('profile');
-    if (this.auth) {
-      this.user = user(this.auth);
-      this.userDisposable = this.user.subscribe(u => {
-        this.logged_in = (u != null);
-        if (!this.logged_in) {
-          this.router.navigate(['login']);
-        }
-      });
-    }
+
+    this.user = toSignal(user(this.auth));
+    this.logged_in = computed(() => Boolean(this.user()));
+
    }
 
    ngOnDestroy(): void {
