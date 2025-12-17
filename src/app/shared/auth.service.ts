@@ -16,7 +16,6 @@ export class AuthService implements OnDestroy {
   private router = inject(Router);
   private google_provider = new GoogleAuthProvider();
 
-  //public readonly userResource: ResourceRef<PublicUser | undefined>
   public readonly user: Signal<User | null | undefined>;
   private readonly userDisposable: Subscription|undefined;
 

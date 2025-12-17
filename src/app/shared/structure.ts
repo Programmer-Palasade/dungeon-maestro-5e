@@ -3,147 +3,28 @@ import { Unsubscribe } from "@angular/fire/auth";
 import { FirestoreService } from "./firestore.service";
 
 
-export class Campaign {
 
-    public doc_id: string;
+export class Campaign {
     public name: string = "New Adventure";
     public owner: string = "Unknown Dungeon Architect";
     public info: string = "A (mysterious/amazing/dramatic/heartwarming/comical/depressing) (adventure/quest/dungeon crawl/legend/business? venture)";
-    public users: string[] = []
-    public players: Map<string, Player> = new Map();
-    public works: Map<string, Work> = new Map();
-    public identifiers: Map<string, string> = new Map();
-    public filters: Map<string, string[]> = new Map();
+    public users: string[] = [];
 
-    private user_map: Map<string, User>;
-    private owner_obj: User|undefined;
-    private admin: boolean = false;
-    private unsub_players: Unsubscribe|undefined;
-    private unsub_works: Unsubscribe|undefined;
-    private unsub_owner: Unsubscribe|undefined;
+    private w_map: Map<string, Work> = new Map();
 
-    constructor( doc_id: string, user_map: Map<string, User> ) {
-        this.doc_id = doc_id;
-        this.user_map = user_map;
+    constructor(name: string, owner: string, info: string, users: string[]) {
+        this.name = name;
+        this.owner = owner;
+        this.info = info;
+        this.users = users;
     }
 
-    public update( c: Campaign ) {
-        this.name = c.name;
-        this.owner = c.owner;
-        this.info = c.info;
-        this.users = c.users;
-        this.unsub();
+    public update(new_c: Campaign) {
+        this.name = new_c.name;
+        this.owner = new_c.owner;
+        this.info = new_c.info;
+        this.users = new_c.users;
     }
-
-    public listen(firestore: Firestore, service: FirestoreService) {
-        this.unsub();
-        
-        this.unsub_owner = onSnapshot( doc(firestore, 'users', this.owner), ss => {
-            if (ss.exists()) { 
-                this.owner_obj = ss.data() as User;
-             }
-        } );
-
-        this.unsub_players = onSnapshot( collection(firestore, 'campaigns', this.doc_id, 'players'), ss => {
-            ss.docChanges().forEach( async change => {
-
-                if (change.type == 'removed') {
-                    let p = this.players.get(change.doc.id);
-                    p?.unsub();
-                    this.players.delete(change.doc.id);
-                    this.user_map.delete(change.doc.id);
-                }
-
-                else {
-                    var p = new Player(change.doc.id);
-                    if (this.players.has(change.doc.id)) {
-                        let old_p = this.players.get(change.doc.id);
-                        old_p?.unsub();
-                    }
-                    if (!this.user_map.has(change.doc.id)) {
-                        let u_doc = await getDoc( doc(firestore, 'users', change.doc.id) );
-                        if (u_doc.exists()) {
-                            this.user_map.set( change.doc.id, u_doc.data() as User );
-                        }
-                    }
-                    p.update( change.doc.data() as Player );
-                    p.listen( collection(firestore, 'campaigns', this.doc_id, 'players', change.doc.id, 'characters'), service.user(), this.work_logic );
-                    this.players.set(change.doc.id, p);
-                }
-            });
-        });
-
-        if (service.user().uid == this.owner) { this.admin = true; }
-        let q_works = query( collection(firestore, 'campaigns', this.doc_id, 'works') );
-        if (!this.admin) { q_works = query( q_works, or( where('supervisible', '==', true), where('beholders', 'array-contains', service.user().uid) ) ); }
-        this.unsub_works = onSnapshot( q_works, ss => {
-            ss.docChanges().forEach( change => {
-                this.work_logic(change);
-            });
-            this.filters.forEach( (works, filter) => {
-                if (works.length == 0) { this.filters.delete(filter); }
-            } );
-        });
-    }
-
-    get owner_info(): User {
-        if (this.owner_obj) { return this.owner_obj; }
-        return { uid: '', name: 'Unknown Dungeon Architect', email: '', requests: [] };
-    }
-
-    public unsub() {
-        if (this.unsub_players) {
-            this.unsub_players();
-            for (let entry of this.players) {
-                entry[1].unsub();
-            }
-        }
-        this.players = new Map();
-        this.unsub_players = undefined;
-        if (this.unsub_works) {
-            this.unsub_works();
-        }
-        this.works = new Map();
-        this.unsub_works = undefined;
-        if (this.unsub_owner) {
-            this.unsub_owner(); 
-        }
-        this.owner_obj = undefined;
-        this.unsub_owner = undefined;
-        this.admin = false;
-    }
-
-    private work_logic(change: DocumentChange) {
-        if (change.type != 'added') {
-            for (let filter of this.works.get(change.doc.id)?.filterables??[]) {
-                if (this.filters.has(filter)) {
-                    if (this.filters.get(filter)?.find(str => { return (str == change.doc.id); })) {
-                        this.filters.get(filter)?.splice( this.filters.get(filter)?.findIndex( str => {return (str == change.doc.id);} )??-1, 1)
-                    }
-                }
-            }
-            for (let identity of this.works.get(change.doc.id)?.identifiers??[]) {
-                if (this.identifiers.has(identity)) { this.identifiers.delete(identity); }
-            }
-        }
-
-        if (change.type == 'removed') {
-            this.works.delete(change.doc.id);
-        }
-        else {
-            var new_work = change.doc.data() as Work;
-            this.works.set(change.doc.id, new_work);
-            for (let filter of new_work.filterables) {
-                if (this.filters.has(filter)) { this.filters.get(filter)?.push(change.doc.id); }
-                else { this.filters.set(filter, [change.doc.id]); }
-            }
-            /* for (let identity of new_work.identifiers) {
-                this.identifiers.set(identity, '/campaigns/'.concat(this.doc_id, '/', change.doc.id));
-            } */
-           this.identifiers.set(new_work.name, '/campaigns/'.concat(this.doc_id, '/', change.doc.id)); // TEMP NAME ONLY IDENTIFIER
-        }
-    }
-
 }
 
 
