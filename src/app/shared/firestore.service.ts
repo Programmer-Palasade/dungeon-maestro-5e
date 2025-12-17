@@ -1,5 +1,5 @@
-import { Injectable, OnDestroy, inject, Signal, computed, Resource, resource, ResourceLoaderParams, ResourceStreamItem } from '@angular/core';
-import { Firestore, collection, doc, query, or, where, onSnapshot, getDoc, setDoc, addDoc, getDocs, updateDoc, arrayUnion, arrayRemove, DocumentReference, deleteDoc, docData, DocumentData } from '@angular/fire/firestore';
+import { Injectable, OnDestroy, inject, Signal, computed, Resource, resource, ResourceLoaderParams, ResourceStreamItem, signal, Query, WritableSignal } from '@angular/core';
+import { Firestore, collection, collectionChanges, doc, query, or, where, onSnapshot, getDoc, setDoc, addDoc, getDocs, updateDoc, arrayUnion, arrayRemove, DocumentReference, deleteDoc, docData, DocumentData, documentId, FieldPath } from '@angular/fire/firestore';
 import { Observable, Subscription } from 'rxjs';
 import { AuthService } from './auth.service';
 import { PublicUser } from './interfaces';
@@ -18,23 +18,71 @@ export class FirestoreService implements OnDestroy {
   private q_user: Unsubscribe|undefined;
   private q_campaign: Unsubscribe|undefined;
 
-  public user: Signal<PublicUser>;
-  private user_doc: Signal<DocumentData>;
-  private associated_users: Map<string, PublicUser> = new Map();
+  public current_user: Signal<PublicUser>;
+  public users: Signal<Map<string, PublicUser>>;
+  private uid_list: WritableSignal<string[]> = signal([]);
+  private readonly null_user: PublicUser = {uid: "null", name: "An Unknown Adventurer", email: "", requests: []};
+  private users_map: Map<string, PublicUser> = new Map();
   
-  public campaigns: Map<string, Campaign> = new Map();
+  private c_map: Map<string, Campaign> = new Map();
+  public campaigns: Signal< Map<string, Campaign> >;
 
   constructor() {
-    this.user_doc = computed( () => toSignal(docData( doc(this.firestore, 'users/'.concat(this.auth.user()?.uid??"null")) )) );
-    this.user = computed( () => {
-      if (this.auth.logged_in()) {
-        var user_data = this.user_doc() as PublicUser;
-        user_data.uid = this.auth.user()?.uid;
-        return user_data;
-      }
-      return {uid: "null", name: "An Unknown Adventurer", email: "", requests: []}
+
+    const user_changes = toSignal(
+      collectionChanges(
+        query(collection(this.firestore, 'users'), 
+              where(documentId(), 'in', this.uid_list()) )
+      )
+    );
+    this.users = computed( () => {
+      user_changes()?.forEach( docChange => {
+        var uid = docChange.doc.id;
+        if (docChange.type == 'added' ||
+            docChange.type == 'modified') this.users_map.set(uid, docChange.doc.data() as PublicUser);
+        else this.users_map.delete(uid);
+      });
+      return this.users_map;
     });
 
+    const current_user_watcher = computed( () => {
+      if (this.auth.logged_in()) {
+        this.includeUser(this.auth.user()?.uid??"null");
+      }
+      else {
+        this.uid_list.set([])
+      }
+    })
+
+    this.current_user = computed( () => {
+      return this.users_map.get(this.auth.user()?.uid??"null")??this.null_user;
+    });
+    
+    const docChanges = toSignal( 
+      collectionChanges( 
+        query( this.campaigns_col, 
+          or( 
+            where('owner', '==', this.current_user().uid),
+            where('users', 'array-contains', this.current_user().uid)
+          )
+        )
+      )
+    );
+    this.campaigns = computed( () => {
+      docChanges()?.forEach( docChange => {
+        const d_id = docChange.doc.id;
+        if (docChange.type == 'added') {
+          this.c_map.set( d_id, docChange.doc.data() as Campaign );
+        }
+        else if (docChange.type == 'modified') {
+          this.c_map.set( d_id, this.c_map.get(d_id)?.update(docChange.doc.data() as Campaign)??docChange.doc.data() as Campaign );
+        }
+        else {
+          this.c_map.delete(d_id);
+        }
+      });
+      return this.c_map;
+    });
   }
 
   ngOnDestroy(): void {
@@ -44,12 +92,32 @@ export class FirestoreService implements OnDestroy {
     return docData(doc(this.firestore, path));
   }
 
+  public includeUser(uid: string) {
+    if (!this.uid_list().includes(uid)) {
+      this.uid_list.update( l => {
+        l.push(uid);
+        return l;
+      });
+    }
+  }
+
+  public excludeUser(uid: string) {
+    if (this.uid_list().includes(uid)) {
+      this.uid_list.update( l => {
+        l.splice( l.indexOf(uid), 1);
+        return l; 
+      });
+    }
+  }
+
   async updateUserData(upd: PublicUser) {
     if (this.auth.logged_in()) {
-      setDoc(doc(this.firestore, 'users/'.concat(this.user().uid??"err")),
+      setDoc(doc(this.firestore, 'users/'.concat(this.current_user().uid??"null")),
         {name: upd.name, email: upd.email, requests: upd.requests});
     }
   }
+
+
 
   /**
   constructor() {
