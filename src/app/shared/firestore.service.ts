@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy, inject, Signal, computed, Resource, resource, ResourceLoaderParams, ResourceStreamItem, signal, Query, WritableSignal } from '@angular/core';
+import { Injectable, OnDestroy, inject, Signal, computed, Resource, resource, ResourceLoaderParams, ResourceStreamItem, signal, Query, WritableSignal, effect } from '@angular/core';
 import { Firestore, collection, collectionChanges, doc, query, or, where, onSnapshot, getDoc, setDoc, addDoc, getDocs, updateDoc, arrayUnion, arrayRemove, DocumentReference, deleteDoc, docData, DocumentData, documentId, FieldPath } from '@angular/fire/firestore';
 import { Observable, Subscription } from 'rxjs';
 import { AuthService } from './auth.service';
@@ -45,14 +45,19 @@ export class FirestoreService implements OnDestroy {
       return this.users_map;
     });
 
-    const current_user_watcher = computed( () => {
+    effect( async () => {
       if (this.auth.logged_in()) {
+        const u = this.auth.user();
+        const u_doc: DocumentReference = doc(this.firestore, 'users/'.concat(u?.uid??"null"))
+        if (!await getDoc( u_doc ).then(data => data.exists())) {
+          setDoc( u_doc, {name: u?.displayName, email: u?.email, requests: []} );
+        }
         this.includeUser(this.auth.user()?.uid??"null");
       }
       else {
-        this.uid_list.set([])
+        this.uid_list.set([]);
       }
-    })
+    });
 
     this.current_user = computed( () => {
       return this.users_map.get(this.auth.user()?.uid??"null")??this.null_user;
